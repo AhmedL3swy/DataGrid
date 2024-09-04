@@ -1,14 +1,59 @@
+<!-- Delete All button -->
+<div class="d-flex justify-content-end">
+  <button class="btn btn-danger" (click)="DeleteAll()">
+    Delete Selected
+  </button>
+</div>
+
 <table class="table">
   <thead>
     <!-- Headers Depend on GridConfig.columns-->
     <tr class="bg-danger">
-      <th *ngFor="let column of GridConfig.columns">{{ column.name }}</th>
+      <!-- Toggle All Check Box -->
+    
+      <th>
+        <input
+          type="checkbox"
+          (change)="ToggleSelectAll()"
+          [checked]="isAllSelected()"
+        />
+      </th>
+      <th *ngFor="let column of GridConfig.columns; let i = index">
+        {{ column.name }}
+        <span *ngIf="column.sortable">
+          <button class="btn btn-link p-0" (click)="Sort(column)">
+            <!-- Font Awesome Icons or Any Other Icon Library -->
+            <i
+              [ngClass]="{
+              'fas fa-sort-asc': column.field === currentSortColumn && sortDirection === 'asc',
+              'fas fa-sort-down': column.field === currentSortColumn && sortDirection === 'desc',
+              'fas fa-sort': column.field !== currentSortColumn,
+              
+            }"
+            ></i>
+          </button>
+        </span>
+      </th>
     </tr>
   </thead>
   <tbody>
     <!-- Data Depend on GridConfig.data-->
     <tr *ngFor="let row of PagintedData">
+      <td>
+        <input
+          type="checkbox"
+          (change)="ToggleSelectEntity(row)"
+          [checked]="isSelectedEntity(row)"
+        />
+      </td>
       <td *ngFor="let column of GridConfig.columns">{{ row[column.field] }}</td>
+      <!-- Inline Edit  -->
+
+      <!-- Actions -->
+      <td>
+        <button class="btn btn-primary" (click)="Edit(row)">Edit</button>
+        <button class="btn btn-danger" (click)="Delete(row)">Delete</button>
+      </td>
     </tr>
 
     <!-- Pagination Depend on GridConfig.Length-->
@@ -31,8 +76,20 @@
           </div>
           <!-- Previous and Next Buttons -->
           <div>
-            <button class="btn btn-primary mx-1" (click)="prev()" [disabled]="currentPage==1">&lt;</button>
-            <button class="btn btn-primary mx-1" (click)="next()"[disabled]="currentPage==maxPage">&gt;</button>
+            <button
+              class="btn btn-primary mx-1"
+              (click)="prev()"
+              [disabled]="currentPage == 1"
+            >
+              &lt;
+            </button>
+            <button
+              class="btn btn-primary mx-1"
+              (click)="next()"
+              [disabled]="currentPage == maxPage"
+            >
+              &gt;
+            </button>
           </div>
 
           <!-- Max Number of Entity Per Page -->
@@ -56,3 +113,78 @@
     </tr>
   </tbody>
 </table>
+
+<!-- Modal For Confirm Delete -->
+<div
+  *ngIf="showDelete"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  [ngClass]="{ 'show d-block': showDelete }"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Confirmation</h5>
+        <button type="button" class="btn-close" (click)="CloseModal()"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="CloseModal()">
+          Close
+        </button>
+        <button type="button" class="btn btn-danger" (click)="DeleteConfirmed()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Edit Modal -->
+<!-- Edit Modal -->
+<div
+  *ngIf="showEdit"
+  class="modal fade"
+  tabindex="-1"
+  role="dialog"
+  [ngClass]="{ 'show d-block': showEdit }"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Entity</h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="CloseEditModal()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Dynamically Generate Input Fields Based on GridConfig.columns -->
+        <div *ngFor="let column of GridConfig.columns" class="mb-3">
+          <label class="form-label">{{ column.name }}</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="editEntity[column.field]"
+            [attr.placeholder]="column.name"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="CloseEditModal()"
+        >
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="SaveEntity()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
