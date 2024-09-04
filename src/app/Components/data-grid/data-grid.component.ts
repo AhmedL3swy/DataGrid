@@ -64,23 +64,21 @@ export class DataGridComponent {
   //#region Delete Logic
   PendingDelting: any;
   DeleteConfirmed() {
-    if(this.MultiMode)
-    {
+    if (this.MultiMode) {
       this.DeleteSelectedEntities();
-    }
-    else{
+    } else {
       this.GridConfig.data = this.GridConfig.data.filter(
-      (x) => x !== this.PendingDelting
-    );
+        (x) => x !== this.PendingDelting
+      );
     }
-    
+
     this.ChangePageSize();
     this.Paginate();
     this.CloseModal();
   }
   showDelete: boolean = false;
   Delete(entity: any) {
-    this.MultiMode=false;
+    this.MultiMode = false;
     this.PendingDelting = entity;
     this.showDelete = true;
   }
@@ -144,9 +142,16 @@ export class DataGridComponent {
   }
   //#endregion
 
-  //#region MultiDelete
+  //#region Multi Operations
+  showBulk: boolean = false;
+  showBulkModal() {
+    this.showBulk = true;
+  }
+  closeBulkModal() {
+    this.showBulk = false;
+  }
   selectedEntitiesSet = new Set<any>();
-  MultiMode:boolean=false;
+  MultiMode: boolean = false;
   ToggleSelectEntity(entity: any) {
     if (this.selectedEntitiesSet.has(entity)) {
       this.selectedEntitiesSet.delete(entity);
@@ -154,7 +159,6 @@ export class DataGridComponent {
       this.selectedEntitiesSet.add(entity);
     }
     this.SaveSelectionState();
-
   }
   isSelectedEntity(entity: any) {
     return this.selectedEntitiesSet.has(entity);
@@ -178,41 +182,50 @@ export class DataGridComponent {
     this.Paginate();
     this.selectedEntitiesSet.clear();
   }
-  DeleteAll()
-  {
-    this.MultiMode=true;
-    this.showDelete=true;
+  DeleteAll() {
+    this.MultiMode = true;
+    this.showDelete = true;
   }
-  SaveSelectionState()
-  {
-    localStorage.setItem('selectedEntities',JSON.stringify(Array.from(this.selectedEntitiesSet)));
+  SaveSelectionState() {
+    localStorage.setItem(
+      'selectedEntities',
+      JSON.stringify(Array.from(this.selectedEntitiesSet))
+    );
   }
-  LoadSelectionSate()
-  {
-    const savedSet=new Set(JSON.parse(localStorage.getItem('selectedEntities')|| ""));
+  LoadSelectionSate() {
+    const savedSet = new Set(
+      JSON.parse(localStorage.getItem('selectedEntities') || '')
+    );
+  }
+  ConvertToArray(){
+    return Array.from(this.selectedEntitiesSet);
   }
   //#endregion
 
   //#region Search
-  searchText:string='';
-  Search(){
-    const SearchableFields=this.GridConfig.columns.filter(x=>x.searchable).map(x=>x.field);
+  searchText: string = '';
+  Search() {
+    const SearchableFields = this.GridConfig.columns
+      .filter((x) => x.searchable)
+      .map((x) => x.field);
     //Search
-    this.PagintedData=this.GridConfig.data.filter(x=>{
-      let isMatch=false;
-      SearchableFields.forEach(field => {
-        if(x[field].toString().toLowerCase().includes(this.searchText.toLowerCase()))
-        {
-          isMatch=true;
+    this.PagintedData = this.GridConfig.data.filter((x) => {
+      let isMatch = false;
+      SearchableFields.forEach((field) => {
+        if (
+          x[field]
+            .toString()
+            .toLowerCase()
+            .includes(this.searchText.toLowerCase())
+        ) {
+          isMatch = true;
         }
       });
       return isMatch;
     });
-    
+
     this.ChangePageSize();
   }
 
   //#endregion
-  
-
 }
