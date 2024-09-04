@@ -20,6 +20,7 @@ export class DataGridComponent {
       this.currentPage - 1,
       this.pageSize
     );
+    this.LoadSelectionSate();
   }
 
   // #region Pagination
@@ -79,6 +80,7 @@ export class DataGridComponent {
   }
   showDelete: boolean = false;
   Delete(entity: any) {
+    this.MultiMode=false;
     this.PendingDelting = entity;
     this.showDelete = true;
   }
@@ -151,6 +153,8 @@ export class DataGridComponent {
     } else {
       this.selectedEntitiesSet.add(entity);
     }
+    this.SaveSelectionState();
+
   }
   isSelectedEntity(entity: any) {
     return this.selectedEntitiesSet.has(entity);
@@ -161,6 +165,7 @@ export class DataGridComponent {
     } else {
       this.GridConfig.data.forEach((x) => this.selectedEntitiesSet.add(x));
     }
+    this.SaveSelectionState();
   }
   isAllSelected() {
     return this.selectedEntitiesSet.size === this.GridConfig.data.length;
@@ -178,5 +183,36 @@ export class DataGridComponent {
     this.MultiMode=true;
     this.showDelete=true;
   }
+  SaveSelectionState()
+  {
+    localStorage.setItem('selectedEntities',JSON.stringify(Array.from(this.selectedEntitiesSet)));
+  }
+  LoadSelectionSate()
+  {
+    const savedSet=new Set(JSON.parse(localStorage.getItem('selectedEntities')|| ""));
+  }
   //#endregion
+
+  //#region Search
+  searchText:string='';
+  Search(){
+    const SearchableFields=this.GridConfig.columns.filter(x=>x.searchable).map(x=>x.field);
+    //Search
+    this.PagintedData=this.GridConfig.data.filter(x=>{
+      let isMatch=false;
+      SearchableFields.forEach(field => {
+        if(x[field].toString().toLowerCase().includes(this.searchText.toLowerCase()))
+        {
+          isMatch=true;
+        }
+      });
+      return isMatch;
+    });
+    
+    this.ChangePageSize();
+  }
+
+  //#endregion
+  
+
 }

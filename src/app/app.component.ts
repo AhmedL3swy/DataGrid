@@ -15,11 +15,11 @@ export class AppComponent {
 
   dataGird: DataGridConfig = {
     columns: [
-      { name: 'Name', field: 'name', sortable: true },
-      { name: 'Age', field: 'age', sortable: false },
+      { name: 'Name', field: 'name', sortable: true, searchable: true },
+      { name: 'Age', field: 'age', sortable: true, searchable: true },
     ],
     data: [
-      { name: 'Ahmed', age: 16 },
+      { bname: 'Ahmed', age: 16 },
       { name: 'bAxhmed', age: 17 },
       { name: 'xAhmed', age: 15 },
       { name: 'rAhmed', age: 11 },
@@ -33,5 +33,6 @@ export class AppComponent {
       { name: 'wAhmed12', age: 14 },
       { name: 'wXD', age: 16 },
     ],
+    
   };
 }
