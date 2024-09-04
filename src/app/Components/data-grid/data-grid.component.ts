@@ -3,6 +3,7 @@ import { DataGridConfig } from '../../types/data-grid-config';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GridStateService } from '../../Services/grid-state.service';
+import { FakeDataServiceService } from '../../Services/fake-data-service.service';
 @Component({
   selector: 'app-data-grid',
   standalone: true,
@@ -13,7 +14,10 @@ import { GridStateService } from '../../Services/grid-state.service';
 export class DataGridComponent {
   // Constructor
   @Input() GridConfig!: DataGridConfig;
-  constructor(private selectionSate: GridStateService) {}
+  constructor(
+    private selectionSate: GridStateService,
+    private FakeData: FakeDataServiceService
+  ) {}
   //NgOnInit
   ngOnInit(): void {
     this.maxPage = Math.ceil(this.GridConfig.data.length / this.pageSize);
@@ -30,10 +34,7 @@ export class DataGridComponent {
   pageSize: number = 10;
   maxPage: number = 1;
   Paginate(): void {
-    this.PagintedData = this.GridConfig.data.slice(
-      (this.currentPage - 1) * this.pageSize,
-      this.pageSize * this.currentPage
-    );
+    this.PagintedData = this.FakeData.GetPaginatedData(this.currentPage,this.pageSize)
   }
   ChangePageSize(): void {
     this.maxPage = Math.ceil(this.GridConfig.data.length / this.pageSize);
@@ -173,7 +174,6 @@ export class DataGridComponent {
     }
     this.SaveSelectionState();
     this.selectionSate.SaveState(this.selectedEntitiesSet);
-
   }
   isAllSelected() {
     return this.selectedEntitiesSet.size === this.GridConfig.data.length;
