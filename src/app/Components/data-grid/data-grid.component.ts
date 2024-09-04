@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { DataGridConfig } from '../../types/data-grid-config';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { GridStateService } from '../../Services/grid-state.service';
 @Component({
   selector: 'app-data-grid',
   standalone: true,
@@ -12,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 export class DataGridComponent {
   // Constructor
   @Input() GridConfig!: DataGridConfig;
-
+  constructor(private selectionSate: GridStateService) {}
   //NgOnInit
   ngOnInit(): void {
     this.maxPage = Math.ceil(this.GridConfig.data.length / this.pageSize);
@@ -20,7 +21,7 @@ export class DataGridComponent {
       this.currentPage - 1,
       this.pageSize
     );
-    this.LoadSelectionSate();
+    this.selectedEntitiesSet = this.selectionSate.GetState();
   }
 
   // #region Pagination
@@ -159,6 +160,7 @@ export class DataGridComponent {
       this.selectedEntitiesSet.add(entity);
     }
     this.SaveSelectionState();
+    this.selectionSate.SaveState(this.selectedEntitiesSet);
   }
   isSelectedEntity(entity: any) {
     return this.selectedEntitiesSet.has(entity);
@@ -170,6 +172,8 @@ export class DataGridComponent {
       this.GridConfig.data.forEach((x) => this.selectedEntitiesSet.add(x));
     }
     this.SaveSelectionState();
+    this.selectionSate.SaveState(this.selectedEntitiesSet);
+
   }
   isAllSelected() {
     return this.selectedEntitiesSet.size === this.GridConfig.data.length;
@@ -197,7 +201,7 @@ export class DataGridComponent {
       JSON.parse(localStorage.getItem('selectedEntities') || '')
     );
   }
-  ConvertToArray(){
+  ConvertToArray() {
     return Array.from(this.selectedEntitiesSet);
   }
   //#endregion
