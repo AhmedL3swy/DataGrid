@@ -1,9 +1,24 @@
-import { Action } from "./action-config";
-import { ColumnConfig } from "./column-config";
+import { Action } from './action-config';
+import { ColumnConfig } from './column-config';
 
 export interface DataGridConfig {
-    uniqueId:string,
-    columns: ColumnConfig[];
-    data: any[];
-    actions:Action[];
+  dataApi: string;
+  apiInputkeyWords: {
+    page: string;
+    pageSize: string;
+    sort: string;
+    order: string;
+    search: string;
+  };
+  apiResultKeyWords: {
+    data: string;
+    total: string;
+  };
+
+  pageSizeOptions: number[];
+  columns: ColumnConfig[];
+
+  uniqueId?: string;
+  currentLocale: string;
+  actions: Action[];
 }

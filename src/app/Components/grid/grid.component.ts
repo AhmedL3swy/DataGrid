@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DataGridConfig } from '../../types/data-grid-config';
-import { DataGridComponent } from "../data-grid/data-grid.component";
+import { ActionType } from '../../types/action-config';
+import { DataGridComponent } from '../data-grid/data-grid.component';
 
 @Component({
   selector: 'app-grid',
@@ -9,51 +10,69 @@ import { DataGridComponent } from "../data-grid/data-grid.component";
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.scss',
 })
-export class GridComponent {
-  dataGird: DataGridConfig = {
-    uniqueId:"id",
-    columns: [
-      { name: 'Name', field: 'name', sortable: true, searchable: true },
-      { name: 'Age', field: 'age', sortable: true, searchable: true },
-    ],
-    data: [
-      { id:1, name: 'Ahmed', age: 16 },
-      { id:2, name: 'bAxhmed', age: 17 },
-      { id:3, name: 'xAhmed', age: 15 },
-      { id:4, name: 'nAhmed', age: 15 },
-      { id:5, name: 'tAhmed', age: 15 },
-      { id:6, name: 'zxAhmed', age: 15 },
-      { id:7, name: 'oxAhmed', age: 15 },
-      { id:8, name: 'xAhmed', age: 15 },
-      { id:9, name: 'yxAhmed', age: 15 },
-      { id:10, name: 'lxAhmed', age: 15 },
-      { id:11, name: 'mxAhmed', age: 15 },
+export class GridContainerComponent {
+  currentLocale() {
+    return 'en';
+  }
+  isAdmin() {
+    return true;
+  }
+  edit(entity: any) {
+    alert('edit' + JSON.stringify(entity));
+  }
+  delete(entity: any) {
+    alert('delete logic' + JSON.stringify(entity));
+  }
+  bulkDelete(entities: any[]) {
+    alert('bulk delete logic' + JSON.stringify(entities));
+    console.log(entities);
+  }
 
+  dataGird: DataGridConfig = {
+    dataApi: 'https://dummyjson.com/products',
+    columns: [
+      {
+        display: { en: 'Dtitle', ar: 'الاسم' },
+        field: { en: 'title', ar: 'الاسم' },
+        SortKeyWord: 'title',
+      },
+      {
+        display: { en: 'Dprice', ar: 'السعر' },
+        field: { en: 'price', ar: 'السعر' },
+      },
     ],
+    currentLocale: this.currentLocale(),
+    apiInputkeyWords: {
+      page: 'skip',
+      pageSize: 'limit',
+      sort: 'sortBy',
+      order: 'order',
+      search: 'search',
+    },
+    apiResultKeyWords: {
+      data: 'products',
+      total: 'total',
+    },
+    pageSizeOptions: [5, 10, 15],
     actions: [
       {
         name: 'Edit',
-        callback: (entity, arg1 = 1, arg2 = 2) =>
-          alert('edit' + JSON.stringify(entity)),
-        roles: ['User','Admin'],
-        type: 'single',
+        callback: (entity) => this.edit(entity),
+        enabled: () => this.isAdmin(),
+        type: ActionType.Single,
       },
       {
         name: 'Delete',
-        callback: (entity) => alert('delete logic' + JSON.stringify(entity)),
-        roles: ['Admin'],
-        type: 'single',
+        callback: (entity) => this.delete(entity),
+        enabled: () => this.isAdmin(),
+        type: ActionType.Single,
       },
       {
         name: 'Bulk Delete',
-        callback: (entities) => {
-          alert('bulk delete logic' + JSON.stringify(entities));
-          console.log(entities);
-        },
-        roles: ['Admin'],
-        type: 'multi',
+        callback: (entities) => this.bulkDelete(entities),
+        enabled: () => this.isAdmin(),
+        type: ActionType.Multi,
       },
-      
     ],
   };
 }

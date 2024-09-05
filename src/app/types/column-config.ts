@@ -1,6 +1,9 @@
 export interface ColumnConfig {
-    name:string,
-    field:string,
-    sortable:boolean
-    searchable:boolean
+  display: {
+    [index: string]: string;
+  };
+  field: {
+    [index: string]: string;
+  };
+  SortKeyWord?: string;
 }

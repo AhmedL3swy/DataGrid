@@ -1,6 +1,12 @@
 export interface Action {
   name: string;
   callback: (...args: any[]) => any;
-  roles: string[];
-  type: string;
+  type: ActionType;
+  enabled: () => boolean;
+}
+
+
+export enum ActionType {
+  Single = 'SINGLE',
+  Multi = 'MULTI',
 }

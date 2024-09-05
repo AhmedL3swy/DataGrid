@@ -1,278 +1,81 @@
-<!--#region MultiSelect Actions -->
-<div class="d-flex justify-content-end"></div>
-<!--#endregion -->
-
-<!--#region Search -->
-<!-- 
-<div class="input-group my-3">
-  <input
-    type="text"
-    class="form-control"
-    placeholder="Search"
-    [(ngModel)]="searchText"
-  />
-  <button class="btn btn-primary" (click)="Search()">Search</button>
-</div> -->
-<!--#endregion -->
-
 <table class="table">
   <!-- #region Headers -->
   <thead>
-    <!-- Headers Depend on GridConfig.columns-->
     <tr class="bg-danger">
       <!-- Toggle All Check Box -->
-
       <th>
         <input
+          title="Checkbox"
           type="checkbox"
-          (change)="ToggleSelectAll()"
+          (change)="toggleSelectAll()"
           [checked]="isAllSelected()"
         />
       </th>
-      <th *ngFor="let column of GridConfig.columns; let i = index">
-        {{ column.name }}
-        <span *ngIf="column.sortable">
-          <button class="btn btn-link p-0" (click)="Sort(column)">
-            <!-- Font Awesome Icons or Any Other Icon Library -->
-            <i
-              [ngClass]="{
-              'fas fa-sort-asc': column.field === currentSortColumn && sortDirection === 'asc',
-              'fas fa-sort-down': column.field === currentSortColumn && sortDirection === 'desc',
-              'fas fa-sort': column.field !== currentSortColumn,
-              
-            }"
-            ></i>
-          </button>
-        </span>
-      </th>
-      <!-- Bulk Action Buttom -->
-      <th>
-        <div class="d-flex justify-content-center">
-          <button class="btn btn-primary" (click)="showBulkModal()">
-            BulkActions
-          </button>
-        </div>
-      </th>
+      <!-- Dynamically Generate Headers Based on Config -->
+      <th *ngFor="let column of dataGridConfig.columns">
+        {{ column.display[dataGridConfig.currentLocale] || '' }}
+        <!-- Sort -->
+        <button
+          class="btn"
+          (click)="onSort(column)"
+          
+        >
+          {{column.field["en"]==state.currentSortColumn && state.sortDirection === 'asc' ? '▲' : '▼' }}
+      </button>
+      
     </tr>
   </thead>
   <!-- #endregion Headers -->
 
   <tbody>
-    <!-- Data Depend on GridConfig.data-->
-    <!-- #region checkbox -->
-    <tr *ngFor="let row of PagintedData">
+      <!-- Bulk Actions -->
+      <tr *ngIf="state.multiMode">
+        <span *ngFor="let action of dataGridConfig.actions">
+          <button 
+          *ngIf="action.type === ActionType.Multi"
+          class="btn btn-primary"        
+          (click)="action.callback(state.multiEntity, 'additional info')"
+        >
+          {{ action.name }}
+        </button>
+        </span>  
+      </tr>
+    <!-- Data Based on DisplayedData -->
+    <tr *ngFor="let row of state.displayedData">
+      <!-- Bulk Actions -->
+       
       <td>
         <input
+          title="Checkbox"
           type="checkbox"
-          (change)="ToggleSelectEntity(row)"
+          (change)="toggleSelectEntity(row)"
           [checked]="isSelectedEntity(row)"
         />
       </td>
-      <!-- #endregion -->
+      <!-- Dynamic Data Rows -->
+      <td *ngFor="let column of dataGridConfig.columns">{{ row[column.field[dataGridConfig.currentLocale]]}}</td>
 
-      <!-- #region Data -->
-      <td *ngFor="let column of GridConfig.columns">{{ row[column.field] }}</td>
-      <!-- #endregion -->
-
-      <!--#region Actions -->
-
-      <td *ngFor="let action of GridConfig.actions">
+      <!-- Actions -->
+      <td *ngFor="let action of dataGridConfig.actions">
         <button
-          *ngIf="action.type == 'single'"
-          class="btn btn-primary"
-          (click)="action.callback(row, 'additional info')"
+          *ngIf="action.type === ActionType.Single"
+          class="btn"
           [ngClass]="{
             'btn-danger': action.name === 'Delete',
             'btn-primary': action.name === 'Edit'
           }"
+          (click)="action.callback(row, 'additional info')"
         >
           {{ action.name }}
-          <!-- tooltip using tilte -->
         </button>
       </td>
-      <!-- Bulk Action Modal -->
-      
-      <!-- #endregion -->
     </tr>
-
-    <!--#region Pagination Depend on GridConfig.Length-->
-    <tr class="row align-items-center">
-      <td colspan="2">
-        <div class="d-flex justify-content-between align-items-center">
-          <!-- Page Information -->
-          <div class="d-flex align-items-center mx-2">
-            <span>Page {{ currentPage }} of {{ maxPage }}</span>
-            <input
-              class="form-control d-inline mx-2"
-              style="width: 60px"
-              placeholder="Page"
-              type="number"
-              (change)="ChangeCurrentPage()"
-              [(ngModel)]="currentPage"
-              [min]="1"
-              [max]="maxPage"
-            />
-          </div>
-          <!-- Previous and Next Buttons -->
-          <div>
-            <button
-              class="btn btn-primary mx-1"
-              (click)="prev()"
-              [disabled]="currentPage == 1"
-            >
-              &lt;
-            </button>
-            <button
-              class="btn btn-primary mx-1"
-              (click)="next()"
-              [disabled]="currentPage == maxPage"
-            >
-              &gt;
-            </button>
-          </div>
-
-          <!-- Max Number of Entity Per Page -->
-          <div class="d-flex align-items-center">
-            <label class="me-2">Max Number Of Entities:</label>
-            <select
-              #select
-              class="form-control d-inline"
-              style="width: 70px"
-              [(ngModel)]="pageSize"
-              (change)="ChangePageSize()"
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
-        </div>
-      </td>
-    </tr>
-    <!-- #endregion -->
   </tbody>
 </table>
 
-<!-- Modal For Confirm Delete -->
-<div
-  *ngIf="showDelete"
-  class="modal fade"
-  tabindex="-1"
-  role="dialog"
-  [ngClass]="{ 'show d-block': showDelete }"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Delete Confirmation</h5>
-        <button type="button" class="btn-close" (click)="CloseModal()"></button>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to delete ?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="CloseModal()">
-          Close
-        </button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          (click)="DeleteConfirmed()"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Edit Modal -->
-<!-- Edit Modal -->
-<div
-  *ngIf="showEdit"
-  class="modal fade"
-  tabindex="-1"
-  role="dialog"
-  [ngClass]="{ 'show d-block': showEdit }"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Entity</h5>
-        <button
-          type="button"
-          class="btn-close"
-          (click)="CloseEditModal()"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <!-- Dynamically Generate Input Fields Based on GridConfig.columns -->
-        <div *ngFor="let column of GridConfig.columns" class="mb-3">
-          <label class="form-label">{{ column.name }}</label>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="editEntity[column.field]"
-            [attr.placeholder]="column.name"
-          />
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="CloseEditModal()"
-        >
-          Close
-        </button>
-        <button type="button" class="btn btn-primary" (click)="SaveEntity()">
-          Save
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-<div
-        *ngIf="showBulk"
-        class="modal fade"
-        tabindex="-1"
-        [ngClass]="{ 'show d-block': showBulk }"
-      >
-        <div class="modal-dialog" >
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Bulk Actions</h5>
-              <button
-                type="button"
-                class="btn-close"
-                (click)="closeBulkModal()"
-              ></button>
-            </div>
-            <div class="modal-body">
-             <div *ngFor="let action of GridConfig.actions">
-                <button
-                  *ngIf="action.type == 'multi'"
-                  class="btn btn-primary"
-                  (click)="action.callback(ConvertToArray(), 'additional info')"
-                  [ngClass]="{
-                    'btn-danger': action.name === 'Delete',
-                    'btn-primary': action.name === 'Edit'
-                  }"
-                >
-                  {{ action.name }}
-                </button>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                (click)="closeBulkModal()"
-              >
-                Close
-              </button>
-              
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- Paginator Component -->
+<app-paginator
+  [total]="state.total"
+  [paginationOptions]="dataGridConfig.pageSizeOptions"
+  (paginationChange)="onPaginationChange($event)"
+></app-paginator>
