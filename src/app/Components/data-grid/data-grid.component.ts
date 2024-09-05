@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [PaginatorComponent, CommonModule, FormsModule, TranslateModule],
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss'],
+  providers:[CachingService]
 })
 export class DataGridComponent {
   navigateToEmpty() {

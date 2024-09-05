@@ -62,7 +62,7 @@
       <td *ngFor="let action of dataGridConfig.actions">
         <button
           *ngIf="action.type === ActionType.Single && action.enabled"
-          class="btn"
+          class="btn btn-primary"
           (click)="action.callback(row)"
         >
           {{ action.name | translate }}
