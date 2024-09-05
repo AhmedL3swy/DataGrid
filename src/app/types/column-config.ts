@@ -1,7 +1,9 @@
 export interface ColumnConfig {
   header: string;
-  field: {
+  field: string;
+  sortable?: boolean;
+  isMultiLang?: boolean;
+  multiField?: {
     [index: string]: string;
   };
-  SortKeyWord?: string;
 }

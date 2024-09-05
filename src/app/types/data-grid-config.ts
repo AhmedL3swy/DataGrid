@@ -18,6 +18,5 @@ export interface DataGridConfig {
   columns: ColumnConfig[];
 
   uniqueKey: string;
-  currentLocale: string;
   actions: Action[];
 }

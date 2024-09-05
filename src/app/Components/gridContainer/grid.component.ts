@@ -11,9 +11,7 @@ import { DataGridComponent } from '../data-grid/data-grid.component';
   styleUrl: './grid.component.scss',
 })
 export class GridContainerComponent {
-  currentLocale() {
-    return 'en';
-  }
+  
   isAdmin() {
     return true;
   }
@@ -33,15 +31,16 @@ export class GridContainerComponent {
     columns: [
       {
         header: 'headers.Title',
-        field: { en: 'title', ar: 'الاسم' },
-        SortKeyWord: 'title',
+        field: 'title',
+        sortable: true,
+        isMultiLang: true,
+        multiField: { en: 'title', ar: 'category' },
       },
       {
         header: 'headers.Price',
-        field: { en: 'price', ar: 'السعر' },
+        field: 'price',
       },
     ],
-    currentLocale: this.currentLocale(),
     apiInputkeyWords: {
       page: 'skip',
       pageSize: 'limit',

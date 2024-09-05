@@ -18,7 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [PaginatorComponent, CommonModule, FormsModule, TranslateModule],
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss'],
-  providers:[CachingService]
+  providers: [CachingService],
 })
 export class DataGridComponent {
   navigateToEmpty() {
@@ -38,6 +38,7 @@ export class DataGridComponent {
     currentSortColumn: '' as string,
     uniqueKey: 'id' as string,
   };
+  language: string = 'en';
 
   constructor(
     private dataService: ApiService,
@@ -47,12 +48,16 @@ export class DataGridComponent {
   ) {
     translate.use('en');
   }
+  currentLocale() :string{
+    return this.translate.currentLang;
+  }
   toggleLang() {
     if (this.translate.currentLang == 'en') {
       this.translate.use('ar');
     } else {
       this.translate.use('en');
     }
+    localStorage.setItem('lang', this.translate.currentLang);
   }
   ngOnInit() {
     this.state.uniqueKey = this.dataGridConfig.uniqueKey;
@@ -60,7 +65,8 @@ export class DataGridComponent {
     if (this.cachingService.dataGridSate.multiMode) {
       this.loadSate();
     }
-    console.log(this.state.multiEntity);
+    // Language
+    this.translate.use(localStorage.getItem('lang') || 'en');
   }
   isThereEnabledMultiActions(): boolean {
     return this.dataGridConfig.actions.some(
@@ -108,13 +114,13 @@ export class DataGridComponent {
   }
 
   onSort(column: any) {
-    if (this.state.currentSortColumn === column.field['en']) {
+    if (this.state.currentSortColumn === column.field) {
       // Toggle sorting direction
       this.state.sortDirection =
         this.state.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       // Set new column to sort and reset sorting direction to ascending
-      this.state.currentSortColumn = column.field['en'];
+      this.state.currentSortColumn = column.field;
       this.state.sortDirection = 'asc';
     }
     this.getData();
