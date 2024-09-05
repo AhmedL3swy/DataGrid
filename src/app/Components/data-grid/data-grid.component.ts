@@ -101,7 +101,7 @@ export class DataGridComponent {
         //  if (field === 'title') return 'category'; // for test
 
     if (this.currentLocale() != 'en') {
-      return this.currentLocale() + field;
+      return this.currentLocale() + field.toUpperCase();
     } 
     return field;
   }
