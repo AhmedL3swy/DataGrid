@@ -37,6 +37,8 @@ export class DataGridComponent {
     currentSortColumn: '' as string,
     uniqueKey: 'id' as string,
   };
+  isEmpty:boolean=false;
+  isLoading:boolean=false;
   language: string = 'en';
 
   constructor(

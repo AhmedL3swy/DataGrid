@@ -35,7 +35,7 @@
   </thead>
   <!-- #endregion Headers -->
 
-  <tbody>
+  <tbody *ngIf="state.displayedData.length > 0">
     <!-- Bulk Actions -->
     <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
       <span *ngFor="let action of dataGridConfig.actions">
@@ -85,6 +85,14 @@
       </td>
     </tr>
   </tbody>
+  <!-- Empty Body -->
+  <tbody *ngIf="state.displayedData.length === 0">
+    <tr>
+      <td colspan="100%">
+        <h1 class="text-center">No Data</h1>
+      </td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- Paginator Component -->
@@ -93,3 +101,5 @@
   [paginationOptions]="dataGridConfig.pageSizeOptions"
   (paginationChange)="onPaginationChange($event)"
 ></app-paginator>
+
+
