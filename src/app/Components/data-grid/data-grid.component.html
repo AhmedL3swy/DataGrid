@@ -1,5 +1,7 @@
 <!-- Navigate to Empty -->
  <button class="btn btn-primary" (click)="navigateToEmpty()">Navigate to Empty</button>
+ <!-- Toogle Lang -->
+  <button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
 <table class="table">
   <!-- #region Headers -->
   <thead>
@@ -15,7 +17,8 @@
       </th>
       <!-- Dynamically Generate Headers Based on Config -->
       <th *ngFor="let column of dataGridConfig.columns">
-        {{ column.display[dataGridConfig.currentLocale] || '' }}
+        <!-- {{ column.display[dataGridConfig.currentLocale] || '' }} -->
+          {{'buttons.Edit' | translate}}
         <!-- Sort -->
         <button
           class="btn"

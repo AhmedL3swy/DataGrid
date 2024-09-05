@@ -8,18 +8,21 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { NavigationService } from '../../Services/navigation.service';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-data-grid',
   standalone: true,
-  imports: [PaginatorComponent, CommonModule, FormsModule],
+  imports: [PaginatorComponent, CommonModule, FormsModule, TranslateModule],
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss'],
 })
 export class DataGridComponent {
-navigateToEmpty() {
+  navigateToEmpty() {
     this.navigation.navigateTo('empty');
-}
+  }
   @Input() dataGridConfig!: DataGridConfig;
   ActionType = ActionType;
   state = {
@@ -38,18 +41,27 @@ navigateToEmpty() {
   constructor(
     private dataService: ApiService,
     private cachingService: CachingService,
-    private navigation: NavigationService
-  ) {}
-
+    private navigation: NavigationService,
+    private translate: TranslateService
+  ) {
+    translate.use('en');
+  }
+  toggleLang() {
+    if (this.translate.currentLang == 'en') {
+      this.translate.use('ar');
+    } else {
+      this.translate.use('en');
+    }
+  }
   ngOnInit() {
-     this.state.uniqueKey = this.dataGridConfig.uniqueKey;
+    this.state.uniqueKey = this.dataGridConfig.uniqueKey;
     this.getData();
     if (this.cachingService.dataGridSate.multiMode) {
       this.loadSate();
     }
-    console.log(this.state.multiEntity)
+    console.log(this.state.multiEntity);
   }
-  isThereEnabledMultiActions() : boolean {
+  isThereEnabledMultiActions(): boolean {
     return this.dataGridConfig.actions.some(
       (action) => action.enabled && action.type === ActionType.Multi
     );
@@ -63,7 +75,6 @@ navigateToEmpty() {
         this.state.total =
           response[this.dataGridConfig.apiResultKeyWords.total];
         // Keep Track of Selected from the Caching Service
-       
       });
   }
   loadSate() {
@@ -73,7 +84,7 @@ navigateToEmpty() {
   }
   saveState() {
     this.cachingService.dataGridSate.multiEntity = this.state.multiEntity;
-    this.cachingService.dataGridSate.multiMode = this.state.multiMode ;
+    this.cachingService.dataGridSate.multiMode = this.state.multiMode;
   }
   onPaginationChange(event: any) {
     this.state.limit = event.limit;
@@ -138,6 +149,8 @@ navigateToEmpty() {
   }
 
   isSelectedEntity(entity: any): boolean {
-    return this.state.multiEntity.some((e: any) => e[this.state.uniqueKey] === entity[this.state.uniqueKey]);
+    return this.state.multiEntity.some(
+      (e: any) => e[this.state.uniqueKey] === entity[this.state.uniqueKey]
+    );
   }
 }

@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DataGridComponent } from './Components/data-grid/data-grid.component';
-import { DataGridConfig } from './types/data-grid-config';
-import { json } from 'stream/consumers';
-import { JsonPipe } from '@angular/common';
+import {  TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +12,7 @@ import { JsonPipe } from '@angular/common';
 })
 export class AppComponent {
   title = 'DataGrid';
-
-  
+  constructor(private translate: TranslateService) {
+    translate.use('ar');
+  }
 }
