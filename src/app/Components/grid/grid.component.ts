@@ -74,5 +74,6 @@ export class GridContainerComponent {
         type: ActionType.Multi,
       },
     ],
+    uniqueKey: 'id',
   };
 }

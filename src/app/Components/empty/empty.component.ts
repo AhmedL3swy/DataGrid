@@ -1,3 +1,4 @@
+import { NavigationService } from './../../Services/navigation.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -8,5 +9,12 @@ import { Component } from '@angular/core';
   styleUrl: './empty.component.scss'
 })
 export class EmptyComponent {
+navigateBack() {
+
+    this.NavigationService.navigateTo('grid');
+  }
+  constructor(
+   private NavigationService: NavigationService
+  ) { }
 
 }

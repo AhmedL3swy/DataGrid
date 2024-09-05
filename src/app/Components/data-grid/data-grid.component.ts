@@ -1,3 +1,4 @@
+import { CachingService } from './../../Services/caching-service.service';
 import { ActionType } from './../../types/action-config';
 import { Component, Input } from '@angular/core';
 import { DataGridConfig } from '../../types/data-grid-config';
@@ -6,6 +7,7 @@ import { PaginatorComponent } from '../paginator/paginator.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
+import { NavigationService } from '../../Services/navigation.service';
 
 @Component({
   selector: 'app-data-grid',
@@ -15,6 +17,9 @@ import { HttpParams } from '@angular/common/http';
   styleUrls: ['./data-grid.component.scss'],
 })
 export class DataGridComponent {
+navigateToEmpty() {
+    this.navigation.navigateTo('empty');
+}
   @Input() dataGridConfig!: DataGridConfig;
   ActionType = ActionType;
   state = {
@@ -24,17 +29,26 @@ export class DataGridComponent {
     skip: 0,
     singleEntity: null as any,
     multiEntity: [] as any[],
-    multiMode: false,
-    sortDirection: 'asc',
-    currentSortColumn: '',
+    multiMode: false as boolean,
+    sortDirection: 'asc' as string,
+    currentSortColumn: '' as string,
+    uniqueKey: 'id' as string,
   };
 
-  constructor(private dataService: ApiService) {}
+  constructor(
+    private dataService: ApiService,
+    private cachingService: CachingService,
+    private navigation: NavigationService
+  ) {}
 
   ngOnInit() {
+     this.state.uniqueKey = this.dataGridConfig.uniqueKey;
     this.getData();
+    if (this.cachingService.dataGridSate.multiMode) {
+      this.loadSate();
+    }
+    console.log(this.state.multiEntity)
   }
-
   getData() {
     this.dataService
       .getData(this.dataGridConfig.dataApi, this.constructParams())
@@ -43,10 +57,19 @@ export class DataGridComponent {
           response[this.dataGridConfig.apiResultKeyWords.data];
         this.state.total =
           response[this.dataGridConfig.apiResultKeyWords.total];
-        console.log(this.state.displayedData);
+        // Keep Track of Selected from the Caching Service
+       
       });
   }
-
+  loadSate() {
+    this.state.multiEntity = this.cachingService.dataGridSate.multiEntity;
+    this.state.multiMode = this.cachingService.dataGridSate.multiMode;
+    this.setMultiMode();
+  }
+  saveState() {
+    this.cachingService.dataGridSate.multiEntity = this.state.multiEntity;
+    this.cachingService.dataGridSate.multiMode = this.state.multiMode ;
+  }
   onPaginationChange(event: any) {
     this.state.limit = event.limit;
     this.state.skip = event.skip;
@@ -87,6 +110,7 @@ export class DataGridComponent {
       this.state.multiEntity = [...this.state.displayedData]; // Select all
     }
     this.setMultiMode();
+    this.saveState();
   }
 
   setMultiMode() {
@@ -105,9 +129,10 @@ export class DataGridComponent {
       this.state.multiEntity.push(entity); // Select entity
     }
     this.setMultiMode();
+    this.saveState();
   }
 
   isSelectedEntity(entity: any): boolean {
-    return this.state.multiEntity.includes(entity);
+    return this.state.multiEntity.some((e: any) => e[this.state.uniqueKey] === entity[this.state.uniqueKey]);
   }
 }

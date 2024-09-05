@@ -18,7 +18,7 @@ export interface DataGridConfig {
   pageSizeOptions: number[];
   columns: ColumnConfig[];
 
-  uniqueId?: string;
+  uniqueKey: string;
   currentLocale: string;
   actions: Action[];
 }
