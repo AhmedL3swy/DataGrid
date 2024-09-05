@@ -24,7 +24,7 @@
         <!-- Sort -->
         <button class="btn" (click)="onSort(column)">
           {{
-            column.field == state.currentSortColumn &&
+            localizeField(column.field) == state.currentSortColumn &&
             state.sortDirection === "asc"
               ? "▲"
               : "▼"

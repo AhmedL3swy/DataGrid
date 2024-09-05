@@ -120,13 +120,12 @@ export class DataGridComponent {
   }
 
   onSort(column: any) {
-    if (this.state.currentSortColumn === column.field) {
+    if (this.state.currentSortColumn === this.localizeField(column.field) ){
       // Toggle sorting direction
-      this.state.sortDirection =
-        this.state.sortDirection === 'asc' ? 'desc' : 'asc';
+      this.state.sortDirection = this.state.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       // Set new column to sort and reset sorting direction to ascending
-      this.state.currentSortColumn = column.field;
+      this.state.currentSortColumn = this.localizeField(column.field);
       this.state.sortDirection = 'asc';
     }
     this.getData();
