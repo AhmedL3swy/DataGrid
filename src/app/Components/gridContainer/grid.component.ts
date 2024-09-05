@@ -58,19 +58,19 @@ export class GridContainerComponent {
       {
         name: 'Edit',
         callback: (entity) => this.edit(entity),
-        enabled: () => this.isAdmin(),
+        enabled: this.isAdmin(),
         type: ActionType.Single,
       },
       {
         name: 'Delete',
         callback: (entity) => this.delete(entity),
-        enabled: () => this.isAdmin(),
+        enabled:  this.isAdmin(),
         type: ActionType.Single,
       },
       {
         name: 'Bulk Delete',
         callback: (entities) => this.bulkDelete(entities),
-        enabled: () => this.isAdmin(),
+        enabled:  this.isAdmin(),
         type: ActionType.Multi,
       },
     ],

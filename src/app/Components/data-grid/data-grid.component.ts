@@ -49,6 +49,11 @@ navigateToEmpty() {
     }
     console.log(this.state.multiEntity)
   }
+  isThereEnabledMultiActions() : boolean {
+    return this.dataGridConfig.actions.some(
+      (action) => action.enabled && action.type === ActionType.Multi
+    );
+  }
   getData() {
     this.dataService
       .getData(this.dataGridConfig.dataApi, this.constructParams())

@@ -31,21 +31,19 @@
 
   <tbody>
       <!-- Bulk Actions -->
-      <tr *ngIf="state.multiMode">
+      <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
         <span *ngFor="let action of dataGridConfig.actions">
           <button 
-          *ngIf="action.type === ActionType.Multi"
+          *ngIf="action.type === ActionType.Multi && action.enabled"
           class="btn btn-primary"        
-          (click)="action.callback(state.multiEntity, 'additional info')"
+          (click)="action.callback(state.multiEntity)"
         >
           {{ action.name }}
         </button>
         </span>  
       </tr>
     <!-- Data Based on DisplayedData -->
-    <tr *ngFor="let row of state.displayedData">
-      <!-- Bulk Actions -->
-       
+    <tr *ngFor="let row of state.displayedData">       
       <td>
         <input
           title="Checkbox"
@@ -60,13 +58,9 @@
       <!-- Actions -->
       <td *ngFor="let action of dataGridConfig.actions">
         <button
-          *ngIf="action.type === ActionType.Single"
+          *ngIf="action.type === ActionType.Single && action.enabled"
           class="btn"
-          [ngClass]="{
-            'btn-danger': action.name === 'Delete',
-            'btn-primary': action.name === 'Edit'
-          }"
-          (click)="action.callback(row, 'additional info')"
+          (click)="action.callback(row)"
         >
           {{ action.name }}
         </button>
