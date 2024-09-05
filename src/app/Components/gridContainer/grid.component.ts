@@ -34,7 +34,7 @@ export class GridContainerComponent {
         field: 'title',
         sortable: true,
         isMultiLang: true,
-        multiField: { en: 'title', ar: 'category' },
+        // multiField: { en: 'title', ar: 'category' },
       },
       {
         header: 'headers.Price',

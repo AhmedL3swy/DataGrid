@@ -11,7 +11,6 @@ import { NavigationService } from '../../Services/navigation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-
 @Component({
   selector: 'app-data-grid',
   standalone: true,
@@ -48,7 +47,7 @@ export class DataGridComponent {
   ) {
     translate.use('en');
   }
-  currentLocale() :string{
+  currentLocale(): string {
     return this.translate.currentLang;
   }
   toggleLang() {
@@ -98,7 +97,14 @@ export class DataGridComponent {
     this.state.skip = event.skip;
     this.getData();
   }
+  localizeField(field: string): string {
+        //  if (field === 'title') return 'category'; // for test
 
+    if (this.currentLocale() != 'en') {
+      return this.currentLocale() + field;
+    } 
+    return field;
+  }
   constructParams() {
     return new HttpParams()
       .set(this.dataGridConfig.apiInputkeyWords.page, this.state.skip)

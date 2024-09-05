@@ -64,7 +64,8 @@
       <td *ngFor="let column of dataGridConfig.columns">
         <!-- if Multi field -->
         <span *ngIf="column.isMultiLang">
-          {{ row[column.multiField![currentLocale()]] }}
+          <!-- {{ row[column.multiField![currentLocale()]] }} -->
+          {{ row[localizeField(column.field)] }}
         </span>
         <!-- else -->
         <span *ngIf="!column.isMultiLang">
