@@ -1,5 +1,11 @@
 {
-    "buttons":{
-        "Edit":"Edit"
-    }
+  "buttons": {
+    "Edit": "Edit",
+    "Delete": "Delete",
+    "BDelete": "Delete Selected"
+  },
+  "headers": {
+    "Title": "Title",
+    "Price": "Price"
+  }
 }

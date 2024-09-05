@@ -17,8 +17,8 @@
       </th>
       <!-- Dynamically Generate Headers Based on Config -->
       <th *ngFor="let column of dataGridConfig.columns">
-        <!-- {{ column.display[dataGridConfig.currentLocale] || '' }} -->
-          {{'buttons.Edit' | translate}}
+        {{ column.header | translate}}
+          <!-- {{'buttons.Edit' | translate}} -->
         <!-- Sort -->
         <button
           class="btn"
@@ -41,7 +41,7 @@
           class="btn btn-primary"        
           (click)="action.callback(state.multiEntity)"
         >
-          {{ action.name }}
+          {{ action.name | translate }}
         </button>
         </span>  
       </tr>
@@ -65,7 +65,7 @@
           class="btn"
           (click)="action.callback(row)"
         >
-          {{ action.name }}
+          {{ action.name | translate }}
         </button>
       </td>
     </tr>

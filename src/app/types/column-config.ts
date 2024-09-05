@@ -1,7 +1,5 @@
 export interface ColumnConfig {
-  display: {
-    [index: string]: string;
-  };
+  header: string;
   field: {
     [index: string]: string;
   };

@@ -1,5 +1,11 @@
 {
   "buttons": {
-    "Edit": "تعديل"
+    "Edit": "تعديل",
+    "Delete": "حذف",
+    "BDelete":"حذف المحدد"
+  },
+  "headers": {
+    "Title": "الاسم",
+    "Price": "السعر"
   }
 }

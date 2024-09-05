@@ -32,12 +32,12 @@ export class GridContainerComponent {
     dataApi: 'https://dummyjson.com/products',
     columns: [
       {
-        display: { en: 'Dtitle', ar: 'الاسم' },
+        header: 'headers.Title',
         field: { en: 'title', ar: 'الاسم' },
         SortKeyWord: 'title',
       },
       {
-        display: { en: 'Dprice', ar: 'السعر' },
+        header: 'headers.Price',
         field: { en: 'price', ar: 'السعر' },
       },
     ],
@@ -56,21 +56,21 @@ export class GridContainerComponent {
     pageSizeOptions: [5, 10, 15],
     actions: [
       {
-        name: 'Edit',
+        name: 'buttons.Edit',
         callback: (entity) => this.edit(entity),
         enabled: this.isAdmin(),
         type: ActionType.Single,
       },
       {
-        name: 'Delete',
+        name: 'buttons.Delete',
         callback: (entity) => this.delete(entity),
-        enabled:  this.isAdmin(),
+        enabled: this.isAdmin(),
         type: ActionType.Single,
       },
       {
-        name: 'Bulk Delete',
+        name: 'buttons.BDelete',
         callback: (entities) => this.bulkDelete(entities),
-        enabled:  this.isAdmin(),
+        enabled: this.isAdmin(),
         type: ActionType.Multi,
       },
     ],
