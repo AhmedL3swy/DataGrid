@@ -53,6 +53,14 @@ export class PaginatorComponent {
       this.currentPage = page;
       this.emitPagination();
     }
+    else if (page < 1) {
+      this.currentPage = 1;
+      this.emitPagination();
+    }
+    else {
+      this.currentPage = this.maxPage;
+      this.emitPagination();
+    }
   }
 
   onPageSizeChange(): void {

@@ -7,7 +7,7 @@
       placeholder="Page"
       type="number"
       (change)="onPageChange($event)"
-      [(ngModel)]="currentPage"
+      [value]="currentPage"
       [min]="1"
       [max]="maxPage"
     />
