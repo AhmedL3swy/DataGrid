@@ -245,6 +245,7 @@ export class DataGridComponent {
     this.dataGridCacheSate.multiMode = this.state.multiMode;
   }
   onPaginationChange(event: any) {
+    
     this.state.limit = event.limit;
     this.state.skip = event.skip;
     this.getData();

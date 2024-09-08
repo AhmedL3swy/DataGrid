@@ -82,6 +82,7 @@ export class PaginatorComponent {
   }
 
   onPageSizeChange(): void {
+    this.dataGridService.emitResetPagSingal();
     this.emitPagination();
   }
 }
