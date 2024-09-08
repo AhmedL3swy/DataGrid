@@ -22,7 +22,7 @@
     </button>
     <!-- Cancel Search -->
     <button class="btn btn-primary" (click)="onCancelSearch()">
-      Reset Search
+      Reset Grid
     </button>
   </div>
 </div>
@@ -168,7 +168,6 @@
 <!-- Paginator Component -->
 <app-paginator
   [total]="state.total"
-  [resetFlag]="resetFlag"
   [paginationOptions]="paginatorOptions"
   (paginationChange)="onPaginationChange($event)"
 ></app-paginator>

@@ -27,7 +27,7 @@ export class DataGridComponent {
   // #region Inputs
   @Input() dataGridConfig!: DataGridConfig;
   // #endregion
-  resetFlag: boolean = false;
+  //resetFlag: boolean = false;
   //#region Outputs
 
   // #endregion
@@ -97,6 +97,11 @@ export class DataGridComponent {
     this.dataGridService.resetSignal.subscribe((value: boolean) => {
       if (value) {
         this.getData();
+      }
+    });
+    this.dataGridService.resetPagSignal.subscribe((value: boolean) => {
+      if (value) {
+        this.state.skip = 0;
       }
     });
   }
@@ -181,7 +186,8 @@ export class DataGridComponent {
     return this.translate.currentLang;
   }
   onSearch(value: string) {
-    this.resetFlag = true;
+    // this.resetFlag = true;\
+    this.dataGridService.emitResetPagSingal();
     if (value.length > 3 && value !== this.state.searchValue) {
       this.state.searchValue = value;
       this.state.skip = 0;
@@ -193,6 +199,7 @@ export class DataGridComponent {
     this.search.nativeElement.value = value.replace(/^\s+/, '');
   }
   onCancelSearch() {
+      this.dataGridService.emitResetPagSingal();
     this.search.nativeElement.value = '';
     this.state.searchValue = '';
     this.getData();
@@ -260,7 +267,7 @@ export class DataGridComponent {
   }
 
   onSort(column: any) {
-    this.dataGridService.emitResetPagSingal()
+    this.dataGridService.emitResetPagSingal();
     if (this.state.currentSortColumn === this.localizeField(column.field)) {
       // Toggle sorting direction
       this.state.sortDirection =
