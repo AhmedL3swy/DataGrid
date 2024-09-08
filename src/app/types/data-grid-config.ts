@@ -20,7 +20,7 @@ export interface DataGridConfig {
   columns: ColumnConfig[];
   uniqueKey?: string;
   actions?: Action[];
-  actionDisplay?: ActionDisplayType;
+  singleActionDisplay?: ActionDisplayType;
 }
 
 export enum ActionDisplayType {

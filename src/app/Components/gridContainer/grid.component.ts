@@ -18,10 +18,9 @@ import { DataGridService } from '../../Services/data-grid.service';
 export class GridContainerComponent {
   constructor(
     private dataGridService: DataGridService,
-    private ApiService:ApiService
+    private ApiService: ApiService
   ) {}
-  resetGrid()
-  {
+  resetGrid() {
     this.dataGridService.emitResetSingal();
   }
   isAdmin() {
@@ -31,12 +30,13 @@ export class GridContainerComponent {
     alert('edit' + JSON.stringify(entity));
   }
   delete(entity: any) {
-    this.ApiService.deleteEntity('https://dummyjson.com/products'
-      , entity.id).subscribe((res) => {
-        console.log(res);
-        this.resetGrid();
-      }
-    );
+    this.ApiService.deleteEntity(
+      'https://dummyjson.com/products',
+      entity.id
+    ).subscribe((res) => {
+      console.log(res);
+      this.resetGrid();
+    });
   }
   bulkDelete(entities: any[]) {
     alert('bulk delete logic' + JSON.stringify(entities));
@@ -75,12 +75,14 @@ export class GridContainerComponent {
         callback: (entity) => this.edit(entity),
         enabled: this.isAdmin(),
         type: ActionType.Single,
+        actionDisplayType: ActionDisplayType.HEADER,
       },
       {
         name: 'buttons.Delete',
         callback: (entity) => this.delete(entity),
         enabled: this.isAdmin(),
         type: ActionType.Single,
+        actionDisplayType: ActionDisplayType.HEADER,
       },
       {
         name: 'buttons.BDelete',
@@ -90,6 +92,6 @@ export class GridContainerComponent {
       },
     ],
     uniqueKey: 'id',
-    actionDisplay: ActionDisplayType.HEADER,
+    // singleActionDisplay: ActionDisplayType.HEADER,
   };
 }

@@ -54,18 +54,21 @@
     </tr>
   </thead>
   <!-- #endregion Headers -->
-  <!-- Loading -->
+    <!--#region Loading -->
   <tbody *ngIf="isLoading()">
     <dialog open>
       <div class="loader"></div>
     </dialog>
   </tbody>
+  <!-- #endregion -->
+
+
   <tbody *ngIf="!isEmpty()">
-    <!-- Bulk Actions -->
+    <!--#region Bulk Actions -->
     <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
       <span *ngFor="let action of dataGridConfig.actions">
         <button
-          *ngIf="action.type === ActionType.Multi && action.enabled"
+          *ngIf="isEnabledMultiAction(action)"
           class="btn btn-primary"
           (click)="action.callback(state.multiEntity)"
         >
@@ -73,11 +76,13 @@
         </button>
       </span>
     </tr>
-    <!-- Single Action if Display Type ==HEADER -->
+    <!-- #endregion -->
+    
+    <!--#region Single Action if Display Type ==HEADER -->
     <tr *ngIf="isHeaderDisplay() && !state.multiMode && state.seletedEntity">
       <td *ngFor="let action of dataGridConfig.actions">
         <button
-          *ngIf="action.type === ActionType.Single && action.enabled"
+          *ngIf="isEnableSingleAction(action)"
           class="btn btn-primary"
           (click)="action.callback(state.seletedEntity)"
         >
@@ -85,6 +90,24 @@
         </button>
       </td>
     </tr>
+    <!-- #endregion -->
+   
+    <!-- #region Single Action if SingleDisplay specifed -->
+    <tr *ngIf="!isHeaderDisplay() && !state.multiMode">
+      <td *ngFor="let action of dataGridConfig.actions">
+        <button
+          *ngIf="
+            isEnableSingleAction(action) && 
+            isActionHeader(action) && state.seletedEntity
+          "
+          class="btn btn-primary"
+          (click)="action.callback(state.seletedEntity)"
+        >
+          {{ action.name | translate }}
+        </button>
+      </td>
+    </tr>
+    <!-- #endregion -->
 
     <!-- Data Based on DisplayedData -->
     <tr *ngFor="let row of state.displayedData">
@@ -111,13 +134,13 @@
         </span>
       </td>
 
-      <!-- Actions -->
+      <!-- #region  ROW Actions -->
       <td *ngFor="let action of dataGridConfig.actions">
         <button
           *ngIf="
             action.type === ActionType.Single &&
-            action.enabled &&
-            !isHeaderDisplay()
+            action.enabled && 
+            !isHeaderDisplay() && !isActionHeader(action) 
           "
           class="btn btn-primary"
           (click)="action.callback(row)"
@@ -125,6 +148,7 @@
           {{ action.name | translate }}
         </button>
       </td>
+      <!--#endregion -->
     </tr>
   </tbody>
 
@@ -136,6 +160,7 @@
       </td>
     </tr>
   </tbody>
+
 </table>
 
 <!-- Paginator Component -->

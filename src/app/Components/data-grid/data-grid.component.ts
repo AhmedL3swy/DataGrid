@@ -1,5 +1,5 @@
 import { DataGridService } from '../../Services/data-grid.service';
-import { ActionType } from './../../types/action-config';
+import { Action, ActionType } from './../../types/action-config';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import {
   ActionDisplayType,
@@ -27,7 +27,7 @@ export class DataGridComponent {
   // #region Inputs
   @Input() dataGridConfig!: DataGridConfig;
   // #endregion
-  searchFlag:boolean=false;
+  searchFlag: boolean = false;
   //#region Outputs
 
   // #endregion
@@ -107,9 +107,13 @@ export class DataGridComponent {
         : ActionDisplayType.HEADER;
   }
   private setDisplayType() {
-    if (this.dataGridConfig.actionDisplay) {
-      this.state.displayType = this.dataGridConfig.actionDisplay;
+    if (this.dataGridConfig.singleActionDisplay) {
+      this.state.displayType = this.dataGridConfig.singleActionDisplay;
     }
+  }
+  isActionHeader(action: Action) {
+    if (!action.actionDisplayType) return false;
+    return action.actionDisplayType === ActionDisplayType.HEADER;
   }
 
   private setLimit() {
@@ -163,14 +167,21 @@ export class DataGridComponent {
     return this.state.isLoading;
   }
   isHeaderDisplay = () => {
+    if (!this.state.displayType) return false;
     return this.state.displayType === ActionDisplayType.HEADER;
   };
+  isEnabledMultiAction(action: Action) {
+    return action.type === ActionType.Multi && action.enabled;
+  }
+  isEnableSingleAction(action: Action) {
+    return action.type === ActionType.Single && action.enabled;
+  }
   // #endregion
   currentLocale(): string {
     return this.translate.currentLang;
   }
   onSearch(value: string) {
-    this.searchFlag=true;
+    this.searchFlag = true;
     if (value.length > 3 && value !== this.state.searchValue) {
       this.state.searchValue = value;
       this.state.skip = 0;
