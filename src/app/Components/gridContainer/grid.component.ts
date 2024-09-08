@@ -5,6 +5,7 @@ import {
 } from '../../types/data-grid-config';
 import { ActionType } from '../../types/action-config';
 import { DataGridComponent } from '../data-grid/data-grid.component';
+import { DataGridService } from '../../Services/data-grid.service';
 
 @Component({
   selector: 'app-grid',
@@ -14,6 +15,13 @@ import { DataGridComponent } from '../data-grid/data-grid.component';
   styleUrl: './grid.component.scss',
 })
 export class GridContainerComponent {
+  constructor(
+    private dataGridService: DataGridService,
+  ) {}
+  resetGrid()
+  {
+    this.dataGridService.emitResetSingal();
+  }
   isAdmin() {
     return true;
   }
@@ -75,6 +83,6 @@ export class GridContainerComponent {
       },
     ],
     uniqueKey: 'id',
-    actionDisplay: ActionDisplayType.HEADER,
+    actionDisplay: ActionDisplayType.ROW,
   };
 }

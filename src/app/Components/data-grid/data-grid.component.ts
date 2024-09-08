@@ -1,4 +1,4 @@
-import { CachingService } from './../../Services/caching-service.service';
+import { DataGridService } from '../../Services/data-grid.service';
 import { ActionType } from './../../types/action-config';
 import { Component, Input } from '@angular/core';
 import {
@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [PaginatorComponent, CommonModule, FormsModule, TranslateModule],
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss'],
-  providers: [CachingService],
+  // providers: [DataGridService],
 })
 export class DataGridComponent {
   // #region Inputs
@@ -62,11 +62,17 @@ export class DataGridComponent {
   };
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
   // #endregion
-
+  dataGridCacheSate: {
+    multiMode: boolean;
+    multiEntity: any[];
+  } = {
+    multiMode: false,
+    multiEntity: [],
+  };
   // #region Constructor
   constructor(
     private dataService: ApiService,
-    private cachingService: CachingService,
+    private dataGridService: DataGridService,
     private navigation: NavigationService,
     private translate: TranslateService
   ) {}
@@ -84,10 +90,16 @@ export class DataGridComponent {
     this.setUniqueKey();
     // Get The Data
     this.getData();
-    if (this.cachingService.dataGridSate.multiMode) {
+    if (this.dataGridCacheSate.multiMode) {
       this.loadSate();
     }
+    this.dataGridService.resetSignal.subscribe((value: boolean) => {
+      if (value) {
+        this.getData();
+      }
+    });
   }
+
   private setDisplayType() {
     if (this.dataGridConfig.actionDisplay) {
       this.state.displayType = this.dataGridConfig.actionDisplay;
@@ -189,13 +201,13 @@ export class DataGridComponent {
       );
   }
   loadSate() {
-    this.state.multiEntity = this.cachingService.dataGridSate.multiEntity;
-    this.state.multiMode = this.cachingService.dataGridSate.multiMode;
+    this.state.multiEntity = this.dataGridCacheSate.multiEntity;
+    this.state.multiMode = this.dataGridCacheSate.multiMode;
     this.setMultiMode();
   }
   saveState() {
-    this.cachingService.dataGridSate.multiEntity = this.state.multiEntity;
-    this.cachingService.dataGridSate.multiMode = this.state.multiMode;
+    this.dataGridCacheSate.multiEntity = this.state.multiEntity;
+    this.dataGridCacheSate.multiMode = this.state.multiMode;
   }
   onPaginationChange(event: any) {
     this.state.limit = event.limit;
