@@ -21,9 +21,6 @@ export class PaginatorComponent {
   currentPage: number = 1;
   pageSize: number = 5;
   ngOnInit(): void {
-    if (this.searchFlag) {
-      this.currentPage = 1;
-    }
     this.pageSize = this.paginationOptions[0];
     this.emitPagination();
   }

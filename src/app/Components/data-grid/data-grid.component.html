@@ -21,7 +21,9 @@
       Search
     </button>
     <!-- Cancel Search -->
-    <button class="btn btn-primary" (click)="onCancelSearch()">Reset</button>
+    <button class="btn btn-primary" (click)="onCancelSearch()">
+      Reset Search
+    </button>
   </div>
 </div>
 <table class="table">
@@ -54,14 +56,13 @@
     </tr>
   </thead>
   <!-- #endregion Headers -->
-    <!--#region Loading -->
+  <!--#region Loading -->
   <tbody *ngIf="isLoading()">
     <dialog open>
       <div class="loader"></div>
     </dialog>
   </tbody>
   <!-- #endregion -->
-
 
   <tbody *ngIf="!isEmpty()">
     <!--#region Bulk Actions -->
@@ -77,7 +78,7 @@
       </span>
     </tr>
     <!-- #endregion -->
-    
+
     <!--#region Single Action if Display Type ==HEADER -->
     <tr *ngIf="isHeaderDisplay() && !state.multiMode && state.seletedEntity">
       <td *ngFor="let action of dataGridConfig.actions">
@@ -91,14 +92,15 @@
       </td>
     </tr>
     <!-- #endregion -->
-   
+
     <!-- #region Single Action if SingleDisplay specifed -->
     <tr *ngIf="!isHeaderDisplay() && !state.multiMode">
       <td *ngFor="let action of dataGridConfig.actions">
         <button
           *ngIf="
-            isEnableSingleAction(action) && 
-            isActionHeader(action) && state.seletedEntity
+            isEnableSingleAction(action) &&
+            isActionHeader(action) &&
+            state.seletedEntity
           "
           class="btn btn-primary"
           (click)="action.callback(state.seletedEntity)"
@@ -139,8 +141,9 @@
         <button
           *ngIf="
             action.type === ActionType.Single &&
-            action.enabled && 
-            !isHeaderDisplay() && !isActionHeader(action) 
+            action.enabled &&
+            !isHeaderDisplay() &&
+            !isActionHeader(action)
           "
           class="btn btn-primary"
           (click)="action.callback(row)"
@@ -160,7 +163,6 @@
       </td>
     </tr>
   </tbody>
-
 </table>
 
 <!-- Paginator Component -->

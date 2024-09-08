@@ -193,10 +193,8 @@ export class DataGridComponent {
     this.search.nativeElement.value = value.replace(/^\s+/, '');
   }
   onCancelSearch() {
-    this.searchFlag = false;
-    this.state.searchValue = '';
-    // set #search value to ''
     this.search.nativeElement.value = '';
+    this.state.searchValue='';
     this.getData();
   }
   toggleLang() {
