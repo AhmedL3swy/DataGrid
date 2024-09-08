@@ -75,14 +75,14 @@ export class GridContainerComponent {
         callback: (entity) => this.edit(entity),
         enabled: this.isAdmin(),
         type: ActionType.Single,
-        actionDisplayType: ActionDisplayType.HEADER,
+        actionDisplayType: ActionDisplayType.ROW,
       },
       {
         name: 'buttons.Delete',
         callback: (entity) => this.delete(entity),
         enabled: this.isAdmin(),
         type: ActionType.Single,
-        actionDisplayType: ActionDisplayType.HEADER,
+        actionDisplayType: ActionDisplayType.ROW,
       },
       {
         name: 'buttons.BDelete',
@@ -92,6 +92,6 @@ export class GridContainerComponent {
       },
     ],
     uniqueKey: 'id',
-    // singleActionDisplay: ActionDisplayType.HEADER,
+    // singleActionDisplay: ActionDisplayType.ROW,
   };
 }

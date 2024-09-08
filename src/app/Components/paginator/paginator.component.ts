@@ -7,30 +7,38 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './paginator.component.html',
   standalone: true,
   styleUrls: ['./paginator.component.scss'],
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
 })
 export class PaginatorComponent {
-  @Input() total: number = 0; 
-  @Input() paginationOptions!: number[] ; 
-  @Input() searchFlag!: boolean; 
+  @Input() total: number = 0;
+  @Input() paginationOptions!: number[];
+  @Input() searchFlag!: boolean;
   @Output() paginationChange = new EventEmitter<{
     limit: number;
     skip: number;
   }>();
 
-
-  currentPage: number = 1; 
+  currentPage: number = 1;
   pageSize: number = 5;
-   ngOnInit(): void { 
-    this.pageSize = this.paginationOptions[0]; 
+  ngOnInit(): void {
+    if (this.searchFlag) {
+      this.currentPage = 1;
+    }
+    this.pageSize = this.paginationOptions[0];
+    this.emitPagination();
+  }
+  ngOnChanges() {
+    if (this.searchFlag) {
+      this.currentPage = 1;
+    }
     this.emitPagination();
   }
   // Calculate the maximum number of pages
   get maxPage(): number {
     return Math.ceil(this.total / this.pageSize);
   }
-  get CurrentPage():number{
-    if (this.searchFlag) {
+  get CurrentPage(): number {
+    if (this.searchFlag && this.currentPage != 1) {
       this.currentPage = 1;
     }
     return this.currentPage;
@@ -61,12 +69,10 @@ export class PaginatorComponent {
     if (page >= 1 && page <= this.maxPage) {
       this.currentPage = page;
       this.emitPagination();
-    }
-    else if (page < 1) {
+    } else if (page < 1) {
       this.currentPage = 1;
       this.emitPagination();
-    }
-    else {
+    } else {
       this.currentPage = this.maxPage;
       this.emitPagination();
     }

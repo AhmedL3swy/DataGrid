@@ -1,13 +1,13 @@
 <div class="d-flex justify-content-between align-items-center">
   <!-- Page Information -->
   <div class="d-flex align-items-center mx-2">
-    <span>Page {{ CurrentPage }} of {{ maxPage }}</span>
+    <span>Page {{ currentPage }} of {{ maxPage }}</span>
     <input
       class="form-control d-inline mx-2"
       placeholder="Page"
       type="number"
       (change)="onPageChange($event)"
-      [value]="CurrentPage"
+      [value]="currentPage"
       [min]="1"
       [max]="maxPage"
     />
@@ -18,14 +18,14 @@
     <button
       class="btn btn-primary mx-1"
       (click)="onPrev()"
-      [disabled]="CurrentPage == 1"
+      [disabled]="currentPage == 1"
     >
       &lt;
     </button>
     <button
       class="btn btn-primary mx-1"
       (click)="onNext()"
-      [disabled]="CurrentPage == maxPage"
+      [disabled]="currentPage == maxPage"
     >
       &gt;
     </button>
