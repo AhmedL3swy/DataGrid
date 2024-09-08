@@ -11,4 +11,8 @@ export class ApiService {
     console.log(`${apiUrl}?${params.toString()}`);
     return this.httpClient.get(apiUrl, { params: params });
   }
+  deleteEntity(apiUrl: string, id: string) {
+    console.log(`${apiUrl}/${id}`);
+    return this.httpClient.delete(`${apiUrl}/${id}`);
+  }
 }

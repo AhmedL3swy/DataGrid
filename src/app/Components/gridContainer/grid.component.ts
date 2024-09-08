@@ -1,3 +1,4 @@
+import { ApiService } from './../../Services/fake-data-service.service';
 import { Component } from '@angular/core';
 import {
   ActionDisplayType,
@@ -17,6 +18,7 @@ import { DataGridService } from '../../Services/data-grid.service';
 export class GridContainerComponent {
   constructor(
     private dataGridService: DataGridService,
+    private ApiService:ApiService
   ) {}
   resetGrid()
   {
@@ -29,7 +31,12 @@ export class GridContainerComponent {
     alert('edit' + JSON.stringify(entity));
   }
   delete(entity: any) {
-    alert('delete logic' + JSON.stringify(entity));
+    this.ApiService.deleteEntity('https://dummyjson.com/products'
+      , entity.id).subscribe((res) => {
+        console.log(res);
+        this.resetGrid();
+      }
+    );
   }
   bulkDelete(entities: any[]) {
     alert('bulk delete logic' + JSON.stringify(entities));
