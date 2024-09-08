@@ -2,7 +2,9 @@
   Navigate to Empty
 </button>
 <button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
-<button class="btn btn-primary" (click)="toggleSingleActionStyle()">Toggle Signle Action Style</button>
+<button class="btn btn-primary" (click)="toggleSingleActionStyle()">
+  Toggle Signle Action Style
+</button>
 <div class="row">
   <div class="col-6">
     <input
@@ -11,12 +13,15 @@
       placeholder="Search"
       #search
       (keyup.enter)="onSearch(search.value)"
+      (input)="strip(search.value)"
     />
   </div>
   <div class="col-3">
     <button class="btn btn-primary" (click)="onSearch(search.value)">
       Search
     </button>
+    <!-- Cancel Search -->
+    <button class="btn btn-primary" (click)="onCancelSearch()">Reset</button>
   </div>
 </div>
 <table class="table">
@@ -109,7 +114,11 @@
       <!-- Actions -->
       <td *ngFor="let action of dataGridConfig.actions">
         <button
-          *ngIf="action.type === ActionType.Single && action.enabled && !isHeaderDisplay()"
+          *ngIf="
+            action.type === ActionType.Single &&
+            action.enabled &&
+            !isHeaderDisplay()
+          "
           class="btn btn-primary"
           (click)="action.callback(row)"
         >
@@ -132,6 +141,7 @@
 <!-- Paginator Component -->
 <app-paginator
   [total]="state.total"
+  [searchFlag]="searchFlag"
   [paginationOptions]="paginatorOptions"
   (paginationChange)="onPaginationChange($event)"
 ></app-paginator>

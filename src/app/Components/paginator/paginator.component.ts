@@ -12,11 +12,12 @@ import { FormsModule } from '@angular/forms';
 export class PaginatorComponent {
   @Input() total: number = 0; 
   @Input() paginationOptions!: number[] ; 
-
+  @Input() searchFlag!: boolean; 
   @Output() paginationChange = new EventEmitter<{
     limit: number;
     skip: number;
   }>();
+
 
   currentPage: number = 1; 
   pageSize: number = 5;
@@ -28,7 +29,12 @@ export class PaginatorComponent {
   get maxPage(): number {
     return Math.ceil(this.total / this.pageSize);
   }
-
+  get CurrentPage():number{
+    if (this.searchFlag) {
+      this.currentPage = 1;
+    }
+    return this.currentPage;
+  }
   // Emit the current limit and skip values
   private emitPagination(): void {
     const skip = (this.currentPage - 1) * this.pageSize;

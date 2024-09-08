@@ -1,6 +1,6 @@
 import { DataGridService } from '../../Services/data-grid.service';
 import { ActionType } from './../../types/action-config';
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import {
   ActionDisplayType,
   DataGridConfig,
@@ -20,13 +20,14 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [PaginatorComponent, CommonModule, FormsModule, TranslateModule],
   templateUrl: './data-grid.component.html',
   styleUrls: ['./data-grid.component.scss'],
+
   // providers: [DataGridService],
 })
 export class DataGridComponent {
   // #region Inputs
   @Input() dataGridConfig!: DataGridConfig;
   // #endregion
-
+  searchFlag:boolean=false;
   //#region Outputs
 
   // #endregion
@@ -77,7 +78,7 @@ export class DataGridComponent {
     private translate: TranslateService
   ) {}
   // #endregion
-
+  @ViewChild('search') search!: ElementRef;
   // #region LifeCycle Hooks
   ngOnInit() {
     this.translate.use(localStorage.getItem('lang') || 'en');
@@ -169,10 +170,24 @@ export class DataGridComponent {
     return this.translate.currentLang;
   }
   onSearch(value: string) {
+    this.searchFlag=true;
     if (value.length > 3 && value !== this.state.searchValue) {
       this.state.searchValue = value;
+      this.state.skip = 0;
       this.getData();
     }
+  }
+  strip(value: string) {
+    // trim spaces from left
+    this.search.nativeElement.value = value.replace(/^\s+/, '');
+  }
+  onCancelSearch() {
+    this.searchFlag = false;
+    this.state.searchValue = '';
+    this.state.skip = 0;
+    // set #search value to ''
+    this.search.nativeElement.value = '';
+    this.getData();
   }
   toggleLang() {
     if (this.translate.currentLang == 'en') {
@@ -252,6 +267,7 @@ export class DataGridComponent {
   toggleSelectAll() {
     if (this.state.multiEntity.length === this.state.displayedData.length) {
       this.state.multiEntity = []; // Deselect all
+      this.state.seletedEntity = null;
     } else {
       this.state.multiEntity = [...this.state.displayedData]; // Select all
     }

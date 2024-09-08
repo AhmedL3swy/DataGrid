@@ -90,6 +90,6 @@ export class GridContainerComponent {
       },
     ],
     uniqueKey: 'id',
-    actionDisplay: ActionDisplayType.ROW,
+    actionDisplay: ActionDisplayType.HEADER,
   };
 }
