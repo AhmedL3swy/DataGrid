@@ -1,13 +1,17 @@
-
- 
 <button class="btn btn-primary" (click)="navigateToEmpty()">
   Navigate to Empty
 </button>
-<button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button> 
+<button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
 
 <div class="row">
   <div class="col-6">
-    <input type="text" class="form-control" placeholder="Search" #search (keyup.enter)="onSearch(search.value)" />
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search"
+      #search
+      (keyup.enter)="onSearch(search.value)"
+    />
   </div>
   <div class="col-3">
     <button class="btn btn-primary" (click)="onSearch(search.value)">
@@ -45,12 +49,12 @@
     </tr>
   </thead>
   <!-- #endregion Headers -->
-<!-- Loading -->
- <tbody *ngIf="isLoading()">
-<dialog open>
-  <div class="loader"></div>
-</dialog>
-</tbody>
+  <!-- Loading -->
+  <tbody *ngIf="isLoading()">
+    <dialog open>
+      <div class="loader"></div>
+    </dialog>
+  </tbody>
   <tbody *ngIf="!isEmpty()">
     <!-- Bulk Actions -->
     <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
@@ -64,6 +68,19 @@
         </button>
       </span>
     </tr>
+    <!-- Single Action if Display Type ==HEADER -->
+    <tr *ngIf="isHeaderDisplay() && !state.multiMode && state.seletedEntity">
+      <td *ngFor="let action of dataGridConfig.actions">
+        <button
+          *ngIf="action.type === ActionType.Single && action.enabled"
+          class="btn btn-primary"
+          (click)="action.callback(state.seletedEntity)"
+        >
+          {{ action.name | translate }}
+        </button>
+      </td>
+    </tr>
+
     <!-- Data Based on DisplayedData -->
     <tr *ngFor="let row of state.displayedData">
       <td>
@@ -92,7 +109,7 @@
       <!-- Actions -->
       <td *ngFor="let action of dataGridConfig.actions">
         <button
-          *ngIf="action.type === ActionType.Single && action.enabled"
+          *ngIf="action.type === ActionType.Single && action.enabled && !isHeaderDisplay()"
           class="btn btn-primary"
           (click)="action.callback(row)"
         >
@@ -101,7 +118,7 @@
       </td>
     </tr>
   </tbody>
- 
+
   <!-- Empty Body -->
   <tbody *ngIf="isEmpty()">
     <tr>
@@ -110,7 +127,6 @@
       </td>
     </tr>
   </tbody>
-  
 </table>
 
 <!-- Paginator Component -->
@@ -119,4 +135,3 @@
   [paginationOptions]="paginatorOptions"
   (paginationChange)="onPaginationChange($event)"
 ></app-paginator>
-

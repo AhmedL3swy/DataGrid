@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { DataGridConfig } from '../../types/data-grid-config';
+import {
+  ActionDisplayType,
+  DataGridConfig,
+} from '../../types/data-grid-config';
 import { ActionType } from '../../types/action-config';
 import { DataGridComponent } from '../data-grid/data-grid.component';
 
@@ -11,7 +14,6 @@ import { DataGridComponent } from '../data-grid/data-grid.component';
   styleUrl: './grid.component.scss',
 })
 export class GridContainerComponent {
-  
   isAdmin() {
     return true;
   }
@@ -73,6 +75,6 @@ export class GridContainerComponent {
       },
     ],
     uniqueKey: 'id',
-    
+    actionDisplay: ActionDisplayType.HEADER,
   };
 }

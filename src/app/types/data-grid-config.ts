@@ -1,10 +1,9 @@
 import { Action } from './action-config';
 import { ColumnConfig } from './column-config';
 export interface DataGridConfig {
+  dataApi: string;
 
-    dataApi: string;
-
-    apiInputkeyWords?: {
+  apiInputkeyWords?: {
     page?: string;
     pageSize?: string;
     sort?: string;
@@ -13,16 +12,18 @@ export interface DataGridConfig {
   };
 
   apiResultKeyWords?: {
-    data?: string ;
+    data?: string;
     total?: string;
   };
+
   pageSizeOptions?: number[];
   columns: ColumnConfig[];
   uniqueKey?: string;
   actions?: Action[];
+  actionDisplay?: ActionDisplayType;
 }
 
-export enum SingleActionDisplayType {
+export enum ActionDisplayType {
   ROW = 'ROW',
   HEADER = 'HEADER',
 }

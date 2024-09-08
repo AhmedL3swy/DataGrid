@@ -1,7 +1,10 @@
 import { CachingService } from './../../Services/caching-service.service';
 import { ActionType } from './../../types/action-config';
 import { Component, Input } from '@angular/core';
-import { DataGridConfig } from '../../types/data-grid-config';
+import {
+  ActionDisplayType,
+  DataGridConfig,
+} from '../../types/data-grid-config';
 import { ApiService } from '../../Services/fake-data-service.service';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { CommonModule } from '@angular/common';
@@ -20,7 +23,6 @@ import { TranslateModule } from '@ngx-translate/core';
   providers: [CachingService],
 })
 export class DataGridComponent {
-
   // #region Inputs
   @Input() dataGridConfig!: DataGridConfig;
   // #endregion
@@ -35,38 +37,39 @@ export class DataGridComponent {
     total: 1,
     limit: 5,
     skip: 0,
+    seletedEntity: null as any,
     multiEntity: [] as any[],
     multiMode: false as boolean,
     sortDirection: 'asc' as string,
     currentSortColumn: '' as string,
     uniqueKey: 'id' as string,
-    isEmpty:false as boolean,
-    isLoading:true as boolean,
+    isEmpty: false as boolean,
+    isLoading: true as boolean,
     language: 'en' as string,
     searchValue: '' as string,
+    displayType: 'ROW' as ActionDisplayType,
   };
-  apiKeywords={
+  apiKeywords = {
     page: 'skip',
     pageSize: 'limit',
     sort: 'sortBy',
     order: 'order',
     search: 'q',
-  }
-  apiResultKeyWords={
+  };
+  apiResultKeyWords = {
     data: 'products',
     total: 'total',
-  }
+  };
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
   // #endregion
-  
+
   // #region Constructor
   constructor(
     private dataService: ApiService,
     private cachingService: CachingService,
     private navigation: NavigationService,
     private translate: TranslateService
-  ) {
-  }
+  ) {}
   // #endregion
 
   // #region LifeCycle Hooks
@@ -74,6 +77,7 @@ export class DataGridComponent {
     this.translate.use(localStorage.getItem('lang') || 'en');
     //  Override default Values if provided!
     this.setPageSizeOptions();
+    this.setDisplayType();
     this.setLimit();
     this.setApiKeywords();
     this.setApiResultKeywords();
@@ -84,9 +88,16 @@ export class DataGridComponent {
       this.loadSate();
     }
   }
+  private setDisplayType() {
+    if (this.dataGridConfig.actionDisplay) {
+      this.state.displayType = this.dataGridConfig.actionDisplay;
+    }
+  }
 
   private setLimit() {
-    this.state.limit = this.dataGridConfig.pageSizeOptions ? this.dataGridConfig.pageSizeOptions[0] : 5;
+    this.state.limit = this.dataGridConfig.pageSizeOptions
+      ? this.dataGridConfig.pageSizeOptions[0]
+      : 5;
   }
   private setPageSizeOptions() {
     if (this.dataGridConfig.pageSizeOptions) {
@@ -127,19 +138,21 @@ export class DataGridComponent {
 
   // #region UI State Functions
   isEmpty(): boolean {
-    if (this.state.displayedData === undefined ) return false;
+    if (this.state.displayedData === undefined) return false;
     else return this.state.displayedData.length === 0 && !this.state.isLoading;
-    
   }
   isLoading(): boolean {
     return this.state.isLoading;
   }
+  isHeaderDisplay = () => {
+    return this.state.displayType === ActionDisplayType.HEADER;
+  };
   // #endregion
   currentLocale(): string {
     return this.translate.currentLang;
   }
   onSearch(value: string) {
-    if (value.length>3 && value !== this.state.searchValue) {
+    if (value.length > 3 && value !== this.state.searchValue) {
       this.state.searchValue = value;
       this.getData();
     }
@@ -152,7 +165,7 @@ export class DataGridComponent {
     }
     localStorage.setItem('lang', this.translate.currentLang);
   }
-  
+
   isThereEnabledMultiActions(): boolean {
     if (!this.dataGridConfig.actions) return false;
     return this.dataGridConfig.actions.some(
@@ -163,17 +176,17 @@ export class DataGridComponent {
     this.state.isLoading = true;
     this.dataService
       .getData(this.dataGridConfig.dataApi, this.constructParams())
-      .subscribe((response: any) => {
-        this.state.displayedData =
-          response[this.apiResultKeyWords.data];
-        this.state.total =
-          response[this.apiResultKeyWords.total];
+      .subscribe(
+        (response: any) => {
+          this.state.displayedData = response[this.apiResultKeyWords.data];
+          this.state.total = response[this.apiResultKeyWords.total];
           this.state.isLoading = false;
-      },
-      (error) => {
-        this.state.isLoading = false;
-        this.state.isEmpty = true;
-      });
+        },
+        (error) => {
+          this.state.isLoading = false;
+          this.state.isEmpty = true;
+        }
+      );
   }
   loadSate() {
     this.state.multiEntity = this.cachingService.dataGridSate.multiEntity;
@@ -190,35 +203,27 @@ export class DataGridComponent {
     this.getData();
   }
   localizeField(field: string): string {
-        //  if (field === 'title') return 'category'; // for test
+    //  if (field === 'title') return 'category'; // for test
 
     if (this.currentLocale() != 'en') {
       return this.currentLocale() + field.toUpperCase();
-    } 
+    }
     return field;
   }
   constructParams() {
     return new HttpParams()
       .set(this.apiKeywords.page, this.state.skip)
       .set(this.apiKeywords.pageSize, this.state.limit)
-      .set(
-        this.apiKeywords.sort,
-        this.state.currentSortColumn
-      )
-      .set(
-        this.apiKeywords.order,
-        this.state.sortDirection
-      )
-      .set(
-        this.apiKeywords.search,
-        this.state.searchValue
-      )
+      .set(this.apiKeywords.sort, this.state.currentSortColumn)
+      .set(this.apiKeywords.order, this.state.sortDirection)
+      .set(this.apiKeywords.search, this.state.searchValue);
   }
 
   onSort(column: any) {
-    if (this.state.currentSortColumn === this.localizeField(column.field) ){
+    if (this.state.currentSortColumn === this.localizeField(column.field)) {
       // Toggle sorting direction
-      this.state.sortDirection = this.state.sortDirection === 'asc' ? 'desc' : 'asc';
+      this.state.sortDirection =
+        this.state.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       // Set new column to sort and reset sorting direction to ascending
       this.state.currentSortColumn = this.localizeField(column.field);
@@ -242,10 +247,17 @@ export class DataGridComponent {
   }
 
   isAllSelected(): boolean {
-    return this.state.displayedData? this.state.multiEntity.length === this.state.displayedData.length : false;
+    return this.state.displayedData
+      ? this.state.multiEntity.length === this.state.displayedData.length
+      : false;
   }
 
   toggleSelectEntity(entity: any) {
+    if (this.state.seletedEntity == entity) {
+      this.state.seletedEntity = null;
+    } else {
+      this.state.seletedEntity = entity;
+    }
     const index = this.state.multiEntity.indexOf(entity);
     if (index > -1) {
       this.state.multiEntity.splice(index, 1); // Deselect entity
@@ -254,6 +266,9 @@ export class DataGridComponent {
     }
     this.setMultiMode();
     this.saveState();
+    if (this.state.multiEntity.length === 1) {
+      this.state.seletedEntity = this.state.multiEntity[0];
+    }
   }
 
   isSelectedEntity(entity: any): boolean {
