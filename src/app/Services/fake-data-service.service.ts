@@ -12,7 +12,7 @@ export class ApiService {
     return this.httpClient.get(apiUrl, { params: params });
   }
   deleteEntity(apiUrl: string, id: string) {
-    console.log(`${apiUrl}/${id}`);
+    console.log(`Delete Singal Sent to ` + `${apiUrl}/${id}`);
     return this.httpClient.delete(`${apiUrl}/${id}`);
   }
 }

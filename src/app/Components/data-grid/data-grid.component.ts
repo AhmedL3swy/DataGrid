@@ -99,7 +99,12 @@ export class DataGridComponent {
       }
     });
   }
-
+  toggleSingleActionStyle() {
+    this.state.displayType =
+      this.state.displayType === ActionDisplayType.HEADER
+        ? ActionDisplayType.ROW
+        : ActionDisplayType.HEADER;
+  }
   private setDisplayType() {
     if (this.dataGridConfig.actionDisplay) {
       this.state.displayType = this.dataGridConfig.actionDisplay;
