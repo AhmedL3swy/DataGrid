@@ -4,8 +4,6 @@ export interface Action {
   type: ActionType;
   enabled:  boolean;
 }
-
-
 export enum ActionType {
   Single = 'SINGLE',
   Multi = 'MULTI',

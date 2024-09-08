@@ -27,14 +27,13 @@ export class GridContainerComponent {
   }
 
   dataGird: DataGridConfig = {
-    dataApi: 'https://dummyjson.com/products',
+    dataApi: 'https://dummyjson.com/products/search',
     columns: [
       {
         header: 'headers.Title',
         field: 'title',
         sortable: true,
         isMultiLang: true,
-        // multiField: { en: 'title', ar: 'category' },
       },
       {
         header: 'headers.Price',
@@ -46,13 +45,13 @@ export class GridContainerComponent {
       pageSize: 'limit',
       sort: 'sortBy',
       order: 'order',
-      search: 'search',
+      search: 'q',
     },
     apiResultKeyWords: {
       data: 'products',
       total: 'total',
     },
-    pageSizeOptions: [5, 10, 15],
+    pageSizeOptions: [7, 10, 15],
     actions: [
       {
         name: 'buttons.Edit',
@@ -74,5 +73,6 @@ export class GridContainerComponent {
       },
     ],
     uniqueKey: 'id',
+    
   };
 }

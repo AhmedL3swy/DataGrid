@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class PaginatorComponent {
   @Input() total: number = 0; 
-  @Input() paginationOptions: number[] = [5, 10, 15, 20, 25, 50, 100]; 
+  @Input() paginationOptions!: number[] ; 
 
   @Output() paginationChange = new EventEmitter<{
     limit: number;
@@ -19,8 +19,11 @@ export class PaginatorComponent {
   }>();
 
   currentPage: number = 1; 
-  pageSize: number = this.paginationOptions[0]; 
-
+  pageSize: number = 5;
+   ngOnInit(): void { 
+    this.pageSize = this.paginationOptions[0]; 
+    this.emitPagination();
+  }
   // Calculate the maximum number of pages
   get maxPage(): number {
     return Math.ceil(this.total / this.pageSize);

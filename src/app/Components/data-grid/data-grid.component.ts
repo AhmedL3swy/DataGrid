@@ -20,37 +20,129 @@ import { TranslateModule } from '@ngx-translate/core';
   providers: [CachingService],
 })
 export class DataGridComponent {
-  navigateToEmpty() {
-    this.navigation.navigateTo('empty');
-  }
+
+  // #region Inputs
   @Input() dataGridConfig!: DataGridConfig;
+  // #endregion
+
+  //#region Outputs
+
+  // #endregion
   ActionType = ActionType;
+  //#region State Variables
   state = {
     displayedData: [] as any[],
-    total: 0,
+    total: 1,
     limit: 5,
     skip: 0,
-    singleEntity: null as any,
     multiEntity: [] as any[],
     multiMode: false as boolean,
     sortDirection: 'asc' as string,
     currentSortColumn: '' as string,
     uniqueKey: 'id' as string,
+    isEmpty:false as boolean,
+    isLoading:true as boolean,
+    language: 'en' as string,
+    searchValue: '' as string,
   };
-  isEmpty:boolean=false;
-  isLoading:boolean=false;
-  language: string = 'en';
-
+  apiKeywords={
+    page: 'skip',
+    pageSize: 'limit',
+    sort: 'sortBy',
+    order: 'order',
+    search: 'q',
+  }
+  apiResultKeyWords={
+    data: 'products',
+    total: 'total',
+  }
+  paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
+  // #endregion
+  
+  // #region Constructor
   constructor(
     private dataService: ApiService,
     private cachingService: CachingService,
     private navigation: NavigationService,
     private translate: TranslateService
   ) {
-    translate.use('en');
   }
+  // #endregion
+
+  // #region LifeCycle Hooks
+  ngOnInit() {
+    this.translate.use(localStorage.getItem('lang') || 'en');
+    //  Override default Values if provided!
+    this.setPageSizeOptions();
+    this.setLimit();
+    this.setApiKeywords();
+    this.setApiResultKeywords();
+    this.setUniqueKey();
+    // Get The Data
+    this.getData();
+    if (this.cachingService.dataGridSate.multiMode) {
+      this.loadSate();
+    }
+  }
+
+  private setLimit() {
+    this.state.limit = this.dataGridConfig.pageSizeOptions ? this.dataGridConfig.pageSizeOptions[0] : 5;
+  }
+  private setPageSizeOptions() {
+    if (this.dataGridConfig.pageSizeOptions) {
+      this.paginatorOptions = this.dataGridConfig.pageSizeOptions;
+    }
+  }
+
+  private setApiKeywords() {
+    if (this.dataGridConfig.apiInputkeyWords) {
+      this.apiKeywords = {
+        ...this.apiKeywords,
+        ...this.dataGridConfig.apiInputkeyWords,
+      };
+    }
+  }
+
+  private setApiResultKeywords() {
+    if (this.dataGridConfig.apiResultKeyWords) {
+      this.apiResultKeyWords = {
+        ...this.apiResultKeyWords,
+        ...this.dataGridConfig.apiResultKeyWords,
+      };
+    }
+  }
+
+  private setUniqueKey() {
+    if (this.dataGridConfig.uniqueKey) {
+      this.state.uniqueKey = this.dataGridConfig.uniqueKey;
+    }
+  }
+  // #endregion
+
+  //#region Navigation
+  navigateToEmpty() {
+    this.navigation.navigateTo('empty');
+  }
+  //#endregion
+
+  // #region UI State Functions
+  isEmpty(): boolean {
+    if (this.state.displayedData === undefined ) return false;
+    else return this.state.displayedData.length === 0 && !this.state.isLoading;
+    
+  }
+  isLoading(): boolean {
+    return this.state.isLoading;
+  }
+  // #endregion
   currentLocale(): string {
     return this.translate.currentLang;
+  }
+  onSearch(value: string) {
+    if (value.length>3 && value !== this.state.searchValue) {
+      this.state.searchValue = value;
+      this.getData();
+    }
   }
   toggleLang() {
     if (this.translate.currentLang == 'en') {
@@ -60,29 +152,27 @@ export class DataGridComponent {
     }
     localStorage.setItem('lang', this.translate.currentLang);
   }
-  ngOnInit() {
-    this.state.uniqueKey = this.dataGridConfig.uniqueKey;
-    this.getData();
-    if (this.cachingService.dataGridSate.multiMode) {
-      this.loadSate();
-    }
-    // Language
-    this.translate.use(localStorage.getItem('lang') || 'en');
-  }
+  
   isThereEnabledMultiActions(): boolean {
+    if (!this.dataGridConfig.actions) return false;
     return this.dataGridConfig.actions.some(
       (action) => action.enabled && action.type === ActionType.Multi
     );
   }
   getData() {
+    this.state.isLoading = true;
     this.dataService
       .getData(this.dataGridConfig.dataApi, this.constructParams())
       .subscribe((response: any) => {
         this.state.displayedData =
-          response[this.dataGridConfig.apiResultKeyWords.data];
+          response[this.apiResultKeyWords.data];
         this.state.total =
-          response[this.dataGridConfig.apiResultKeyWords.total];
-        // Keep Track of Selected from the Caching Service
+          response[this.apiResultKeyWords.total];
+          this.state.isLoading = false;
+      },
+      (error) => {
+        this.state.isLoading = false;
+        this.state.isEmpty = true;
       });
   }
   loadSate() {
@@ -109,16 +199,20 @@ export class DataGridComponent {
   }
   constructParams() {
     return new HttpParams()
-      .set(this.dataGridConfig.apiInputkeyWords.page, this.state.skip)
-      .set(this.dataGridConfig.apiInputkeyWords.pageSize, this.state.limit)
+      .set(this.apiKeywords.page, this.state.skip)
+      .set(this.apiKeywords.pageSize, this.state.limit)
       .set(
-        this.dataGridConfig.apiInputkeyWords.sort,
+        this.apiKeywords.sort,
         this.state.currentSortColumn
       )
       .set(
-        this.dataGridConfig.apiInputkeyWords.order,
+        this.apiKeywords.order,
         this.state.sortDirection
-      );
+      )
+      .set(
+        this.apiKeywords.search,
+        this.state.searchValue
+      )
   }
 
   onSort(column: any) {
@@ -148,7 +242,7 @@ export class DataGridComponent {
   }
 
   isAllSelected(): boolean {
-    return this.state.multiEntity.length === this.state.displayedData.length;
+    return this.state.displayedData? this.state.multiEntity.length === this.state.displayedData.length : false;
   }
 
   toggleSelectEntity(entity: any) {

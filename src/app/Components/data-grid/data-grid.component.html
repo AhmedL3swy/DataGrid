@@ -1,9 +1,20 @@
-<!-- Navigate to Empty -->
+
+ 
 <button class="btn btn-primary" (click)="navigateToEmpty()">
   Navigate to Empty
 </button>
-<!-- Toogle Lang -->
-<button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
+<button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button> 
+
+<div class="row">
+  <div class="col-6">
+    <input type="text" class="form-control" placeholder="Search" #search (keyup.enter)="onSearch(search.value)" />
+  </div>
+  <div class="col-3">
+    <button class="btn btn-primary" (click)="onSearch(search.value)">
+      Search
+    </button>
+  </div>
+</div>
 <table class="table">
   <!-- #region Headers -->
   <thead>
@@ -34,8 +45,13 @@
     </tr>
   </thead>
   <!-- #endregion Headers -->
-
-  <tbody *ngIf="state.displayedData.length > 0">
+<!-- Loading -->
+ <tbody *ngIf="isLoading()">
+<dialog open>
+  <div class="loader"></div>
+</dialog>
+</tbody>
+  <tbody *ngIf="!isEmpty()">
     <!-- Bulk Actions -->
     <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
       <span *ngFor="let action of dataGridConfig.actions">
@@ -85,21 +101,22 @@
       </td>
     </tr>
   </tbody>
+ 
   <!-- Empty Body -->
-  <tbody *ngIf="state.displayedData.length === 0">
+  <tbody *ngIf="isEmpty()">
     <tr>
       <td colspan="100%">
         <h1 class="text-center">No Data</h1>
       </td>
     </tr>
   </tbody>
+  
 </table>
 
 <!-- Paginator Component -->
 <app-paginator
   [total]="state.total"
-  [paginationOptions]="dataGridConfig.pageSizeOptions"
+  [paginationOptions]="paginatorOptions"
   (paginationChange)="onPaginationChange($event)"
 ></app-paginator>
-
 

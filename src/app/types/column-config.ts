@@ -3,7 +3,4 @@ export interface ColumnConfig {
   field: string;
   sortable?: boolean;
   isMultiLang?: boolean;
-  multiField?: {
-    [index: string]: string;
-  };
 }
