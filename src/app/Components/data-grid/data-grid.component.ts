@@ -195,7 +195,6 @@ export class DataGridComponent {
   onCancelSearch() {
     this.searchFlag = false;
     this.state.searchValue = '';
-    this.state.skip = 0;
     // set #search value to ''
     this.search.nativeElement.value = '';
     this.getData();
