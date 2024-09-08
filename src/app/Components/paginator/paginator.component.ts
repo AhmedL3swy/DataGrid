@@ -1,3 +1,4 @@
+import { DataGridService } from './../../Services/data-grid.service';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -12,20 +13,25 @@ import { FormsModule } from '@angular/forms';
 export class PaginatorComponent {
   @Input() total: number = 0;
   @Input() paginationOptions!: number[];
-  @Input() searchFlag!: boolean;
+  @Input() resetFlag!: boolean;
   @Output() paginationChange = new EventEmitter<{
     limit: number;
     skip: number;
   }>();
-
+  constructor(private dataGridService: DataGridService) {}
   currentPage: number = 1;
   pageSize: number = 5;
   ngOnInit(): void {
     this.pageSize = this.paginationOptions[0];
     this.emitPagination();
+    this.dataGridService.resetPagSignal.subscribe((value: boolean) => {
+      if (value) {
+        this.currentPage = 1;
+      }
+    });
   }
   ngOnChanges() {
-    if (this.searchFlag) {
+    if (this.resetFlag) {
       this.currentPage = 1;
     }
     this.emitPagination();
@@ -35,7 +41,7 @@ export class PaginatorComponent {
     return Math.ceil(this.total / this.pageSize);
   }
   get CurrentPage(): number {
-    if (this.searchFlag && this.currentPage != 1) {
+    if (this.resetFlag && this.currentPage != 1) {
       this.currentPage = 1;
     }
     return this.currentPage;

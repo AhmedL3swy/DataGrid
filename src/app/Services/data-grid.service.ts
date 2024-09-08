@@ -6,11 +6,16 @@ import { Subject } from 'rxjs';
 })
 export class DataGridService {
   constructor() {}
- 
 
   resetSignal = new Subject<boolean>();
 
   emitResetSingal() {
     this.resetSignal.next(true);
+  }
+
+  resetPagSignal = new Subject<boolean>();
+
+  emitResetPagSingal(){
+    this.resetPagSignal.next(true);
   }
 }

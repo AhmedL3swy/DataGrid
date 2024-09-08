@@ -27,7 +27,7 @@ export class DataGridComponent {
   // #region Inputs
   @Input() dataGridConfig!: DataGridConfig;
   // #endregion
-  searchFlag: boolean = false;
+  resetFlag: boolean = false;
   //#region Outputs
 
   // #endregion
@@ -181,7 +181,7 @@ export class DataGridComponent {
     return this.translate.currentLang;
   }
   onSearch(value: string) {
-    this.searchFlag = true;
+    this.resetFlag = true;
     if (value.length > 3 && value !== this.state.searchValue) {
       this.state.searchValue = value;
       this.state.skip = 0;
@@ -194,7 +194,7 @@ export class DataGridComponent {
   }
   onCancelSearch() {
     this.search.nativeElement.value = '';
-    this.state.searchValue='';
+    this.state.searchValue = '';
     this.getData();
   }
   toggleLang() {
@@ -243,7 +243,7 @@ export class DataGridComponent {
     this.getData();
   }
   localizeField(field: string): string {
-    //  if (field === 'title') return 'category'; // for test
+    //  if (field === 'title' && this.currentLocale() != 'en') return 'category'; // for test
 
     if (this.currentLocale() != 'en') {
       return this.currentLocale() + field.toUpperCase();
@@ -260,6 +260,7 @@ export class DataGridComponent {
   }
 
   onSort(column: any) {
+    this.dataGridService.emitResetPagSingal()
     if (this.state.currentSortColumn === this.localizeField(column.field)) {
       // Toggle sorting direction
       this.state.sortDirection =
@@ -288,6 +289,7 @@ export class DataGridComponent {
   }
 
   isAllSelected(): boolean {
+    if (!this.state.multiEntity) return false;
     return this.state.displayedData
       ? this.state.multiEntity.length === this.state.displayedData.length
       : false;
