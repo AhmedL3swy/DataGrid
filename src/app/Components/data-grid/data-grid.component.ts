@@ -50,15 +50,15 @@ export class DataGridComponent {
     searchValue: '' as string,
     displayType: 'ROW' as ActionDisplayType,
   };
-  apiKeywords = {
+  request = {
     page: 'skip',
     pageSize: 'limit',
     sort: 'sortBy',
     order: 'order',
     search: 'q',
   };
-  apiResultKeyWords = {
-    data: 'products',
+  result = {
+    data: 'data',
     total: 'total',
   };
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
@@ -86,24 +86,34 @@ export class DataGridComponent {
     this.setPageSizeOptions();
     this.setDisplayType();
     this.setLimit();
-    this.setApiKeywords();
-    this.setApiResultKeywords();
+    this.setrequest();
+   // this.setresult();
     this.setUniqueKey();
     // Get The Data
     this.getData();
-    if (this.dataGridCacheSate.multiMode) {
-      this.loadSate();
-    }
-    this.dataGridService.resetSignal.subscribe((value: boolean) => {
-      if (value) {
-        this.getData();
+
+    // this.dataGridService.resetSignal.subscribe((value: boolean) => {
+    //   if (value) {
+    //     this.getData();
+    //   }
+    // });
+    // this.dataGridService.resetPagSignal.subscribe((value: boolean) => {
+    //   if (value) {
+    //     this.state.skip = 0;
+    //   }
+    // });
+  }
+  getData() {
+    this.dataService.searchEntity(this.dataGridConfig.dataApi, {}).subscribe(
+      (response: any) => {
+        this.state.displayedData = response[this.result.data];
+        this.state.total = response[this.result.total];
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
       }
-    });
-    this.dataGridService.resetPagSignal.subscribe((value: boolean) => {
-      if (value) {
-        this.state.skip = 0;
-      }
-    });
+    );
   }
   toggleSingleActionStyle() {
     this.state.displayType =
@@ -132,23 +142,23 @@ export class DataGridComponent {
     }
   }
 
-  private setApiKeywords() {
+  private setrequest() {
     if (this.dataGridConfig.apiInputkeyWords) {
-      this.apiKeywords = {
-        ...this.apiKeywords,
+      this.request = {
+        ...this.request,
         ...this.dataGridConfig.apiInputkeyWords,
       };
     }
   }
 
-  private setApiResultKeywords() {
-    if (this.dataGridConfig.apiResultKeyWords) {
-      this.apiResultKeyWords = {
-        ...this.apiResultKeyWords,
-        ...this.dataGridConfig.apiResultKeyWords,
-      };
-    }
-  }
+  // private setresult() {
+  //   if (this.dataGridConfig.result) {
+  //     this.result = {
+  //       ...this.result,
+  //       ...this.dataGridConfig.result,
+  //     };
+  //   }
+  // }
 
   private setUniqueKey() {
     if (this.dataGridConfig.uniqueKey) {
@@ -199,7 +209,7 @@ export class DataGridComponent {
     this.search.nativeElement.value = value.replace(/^\s+/, '');
   }
   onCancelSearch() {
-      this.dataGridService.emitResetPagSingal();
+    this.dataGridService.emitResetPagSingal();
     this.search.nativeElement.value = '';
     this.state.searchValue = '';
     this.getData();
@@ -219,63 +229,47 @@ export class DataGridComponent {
       (action) => action.enabled && action.type === ActionType.Multi
     );
   }
-  getData() {
-    this.state.isLoading = true;
-    this.dataService
-      .getData(this.dataGridConfig.dataApi, this.constructParams())
-      .subscribe(
-        (response: any) => {
-          this.state.displayedData = response[this.apiResultKeyWords.data];
-          this.state.total = response[this.apiResultKeyWords.total];
-          this.state.isLoading = false;
-        },
-        (error) => {
-          this.state.isLoading = false;
-          this.state.isEmpty = true;
-        }
-      );
-  }
+
   loadSate() {
     this.state.multiEntity = this.dataGridCacheSate.multiEntity;
     this.state.multiMode = this.dataGridCacheSate.multiMode;
     this.setMultiMode();
   }
+
   saveState() {
     this.dataGridCacheSate.multiEntity = this.state.multiEntity;
     this.dataGridCacheSate.multiMode = this.state.multiMode;
   }
   onPaginationChange(event: any) {
-    
     this.state.limit = event.limit;
-    this.state.skip = event.skip;
+    this.state.skip = event.skip; //10
     this.getData();
   }
-  localizeField(field: string): string {
-    //  if (field === 'title' && this.currentLocale() != 'en') return 'category'; // for test
-
-    if (this.currentLocale() != 'en') {
-      return this.currentLocale() + field.toUpperCase();
-    }
-    return field;
+  localizeField(field: string,isMultiLang:boolean): string {
+    if (!isMultiLang) return field;
+    return this.currentLocale() + field.charAt(0).toUpperCase() + field.slice(1);
   }
   constructParams() {
     return new HttpParams()
-      .set(this.apiKeywords.page, this.state.skip)
-      .set(this.apiKeywords.pageSize, this.state.limit)
-      .set(this.apiKeywords.sort, this.state.currentSortColumn)
-      .set(this.apiKeywords.order, this.state.sortDirection)
-      .set(this.apiKeywords.search, this.state.searchValue);
+      .set(this.request.page, this.state.skip)
+      .set(this.request.pageSize, this.state.limit)
+      .set(this.request.sort, this.state.currentSortColumn)
+      .set(this.request.order, this.state.sortDirection)
+      .set(this.request.search, this.state.searchValue);
   }
 
   onSort(column: any) {
     this.dataGridService.emitResetPagSingal();
-    if (this.state.currentSortColumn === this.localizeField(column.field)) {
+    if (this.state.currentSortColumn === this.localizeField(column.field,column.isMultiLang)) {
       // Toggle sorting direction
       this.state.sortDirection =
         this.state.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       // Set new column to sort and reset sorting direction to ascending
-      this.state.currentSortColumn = this.localizeField(column.field);
+      this.state.currentSortColumn = this.localizeField(
+        column.field,
+        column.isMultiLang
+      );
       this.state.sortDirection = 'asc';
     }
     this.getData();
@@ -309,6 +303,7 @@ export class DataGridComponent {
     } else {
       this.state.seletedEntity = entity;
     }
+
     const index = this.state.multiEntity.indexOf(entity);
     if (index > -1) {
       this.state.multiEntity.splice(index, 1); // Deselect entity
@@ -317,6 +312,7 @@ export class DataGridComponent {
     }
     this.setMultiMode();
     this.saveState();
+
     if (this.state.multiEntity.length === 1) {
       this.state.seletedEntity = this.state.multiEntity[0];
     }

@@ -5,7 +5,11 @@
     "BDelete": "Delete Selected"
   },
   "headers": {
-    "Title": "Title",
-    "Price": "Price"
+    "enTitle": "English Title",
+    "arTitle": "Arabic Title",
+    "Description": "Description",
+    "Price": "Price",
+    "Stock": "Stock",
+    "AddedOn": "Added On"
   }
 }

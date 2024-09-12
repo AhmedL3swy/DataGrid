@@ -44,38 +44,43 @@ export class GridContainerComponent {
   }
 
   dataGird: DataGridConfig = {
-    dataApi: 'https://dummyjson.com/products/search',
+    dataApi: 'https://localhost:7237/api/Product/Search',
     columns: [
       {
-        header: 'headers.Title',
-        field: 'title',
+        header: 'headers.enTitle',
+        field: 'enName',
         sortable: true,
+      },
+      {
+        header: 'headers.arTitle',
+        field: 'arName',
+        sortable: true,
+      },
+      {
+        header: 'headers.Description',
+        field: 'description',
         isMultiLang: true,
       },
       {
         header: 'headers.Price',
         field: 'price',
       },
+      {
+        header: 'headers.Stock',
+        field: 'stock',
+      },
+      {
+        header: 'headers.AddedOn',
+        field: 'addedDate',
+      },
     ],
-    apiInputkeyWords: {
-      page: 'skip',
-      pageSize: 'limit',
-      sort: 'sortBy',
-      order: 'order',
-      search: 'q',
-    },
-    apiResultKeyWords: {
-      data: 'products',
-      total: 'total',
-    },
-    pageSizeOptions: [7, 10, 15],
     actions: [
       {
         name: 'buttons.Edit',
         callback: (entity) => this.edit(entity),
         enabled: this.isAdmin(),
         type: ActionType.Single,
-        actionDisplayType: ActionDisplayType.ROW,
+        actionDisplayType: ActionDisplayType.HEADER,
       },
       {
         name: 'buttons.Delete',
@@ -91,7 +96,5 @@ export class GridContainerComponent {
         type: ActionType.Multi,
       },
     ],
-    uniqueKey: 'id',
-    // singleActionDisplay: ActionDisplayType.ROW,
   };
 }

@@ -46,7 +46,7 @@
         <!-- Sort -->
         <button class="btn" (click)="onSort(column)">
           {{
-            localizeField(column.field) == state.currentSortColumn &&
+            localizeField(column.field,column.isMultiLang!) == state.currentSortColumn &&
             state.sortDirection === "asc"
               ? "▲"
               : "▼"
@@ -57,11 +57,11 @@
   </thead>
   <!-- #endregion Headers -->
   <!--#region Loading -->
-  <tbody *ngIf="isLoading()">
+  <!-- <tbody *ngIf="isLoading()">
     <dialog open>
       <div class="loader"></div>
     </dialog>
-  </tbody>
+  </tbody> -->
   <!-- #endregion -->
 
   <tbody *ngIf="!isEmpty()">
@@ -128,7 +128,7 @@
         <!-- if Multi field -->
         <span *ngIf="column.isMultiLang">
           <!-- {{ row[column.multiField![currentLocale()]] }} -->
-          {{ row[localizeField(column.field)] }}
+          {{ row[localizeField(column.field,column.isMultiLang)] }}
         </span>
         <!-- else -->
         <span *ngIf="!column.isMultiLang">
