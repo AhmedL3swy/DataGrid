@@ -64,14 +64,17 @@ export class GridContainerComponent {
       {
         header: 'headers.Price',
         field: 'price',
+        sortable: true,
       },
       {
         header: 'headers.Stock',
         field: 'stock',
+        sortable: true,
       },
       {
         header: 'headers.AddedOn',
         field: 'addedDate',
+        sortable: true,
       },
     ],
     actions: [

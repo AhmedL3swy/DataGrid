@@ -53,9 +53,9 @@ export class DataGridComponent {
     pageSize: 'pageSize',
     sort: 'sortBy',
     sortDirection: 'sortDirection',
-    searchParam: 'search',
     search: 'search',
-  };
+    rangeSearch: 'rangeSearch',
+    };
   result = {
     data: 'data',
     total: 'total',
@@ -69,6 +69,13 @@ export class DataGridComponent {
     price: null,
     stock: null,
   };
+  rangeSearchObj = [
+    {
+      field:'xD',
+      start: "1",
+      end: "100",
+    },
+  ]
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
   // #endregion
 
@@ -99,6 +106,13 @@ export class DataGridComponent {
         this.state.currentSortColumn.slice(1),
       [this.request.sortDirection]: this.state.sortDirection === 'asc' ? 1 : 0,
       [this.request.search]: this.searchObj,
+      [this.request.rangeSearch]: this.rangeSearchObj.map((range) => {
+        return {
+          field: range.field.charAt(0).toUpperCase() + range.field.slice(1),
+          start: range.start,
+          end: range.end,
+        };
+      }),
     };
     console.log(ApiObject);
     return ApiObject;

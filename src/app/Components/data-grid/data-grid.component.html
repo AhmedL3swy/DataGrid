@@ -50,7 +50,7 @@
         {{ column.header | translate }}
         <!-- {{'buttons.Edit' | translate}} -->
         <!-- Sort -->
-        <button class="btn" (click)="onSort(column)">
+        <button class="btn" (click)="onSort(column)" *ngIf="column.sortable">
           {{
             localizeField(column.field,column.isMultiLang!) == state.currentSortColumn &&
             state.sortDirection === "asc"
