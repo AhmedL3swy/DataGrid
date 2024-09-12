@@ -30,10 +30,7 @@ export class DataGridComponent {
 
   ActionType = ActionType;
 
-
-
-
-  //#region State 
+  //#region State
   state = {
     displayedData: [] as any[],
     total: 1,
@@ -55,17 +52,25 @@ export class DataGridComponent {
     pageNumber: 'pageNumber',
     pageSize: 'pageSize',
     sort: 'sortBy',
-    order: 'order',
-    search: 'q',
+    sortDirection: 'sortDirection',
+    searchParam: 'search',
+    search: 'search',
   };
   result = {
     data: 'data',
     total: 'total',
   };
+  searchObj = {
+    id: null,
+    arName: null as string | null,
+    enName: null as string | null,
+    description: null,
+    enDescription: null,
+    price: null,
+    stock: null,
+  };
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
   // #endregion
-
-
 
   // #region Constructor
   constructor(
@@ -75,10 +80,6 @@ export class DataGridComponent {
     private translate: TranslateService
   ) {}
   // #endregion
-
-
-
-
 
   @ViewChild('search') search!: ElementRef;
   // #region LifeCycle Hooks
@@ -90,28 +91,34 @@ export class DataGridComponent {
 
   // #region Initialization And APi Calls
   constructParams() {
-    return new HttpParams()
-      .set(this.request.pageNumber, this.state.pageNumber)
-      .set(this.request.pageSize, this.state.pageSize)
-      .set(this.request.sort, this.state.currentSortColumn)
-      .set(this.request.order, this.state.sortDirection)
-      .set(this.request.search, this.state.searchValue);
+    const ApiObject = {
+      [this.request.pageNumber]: this.state.pageNumber,
+      [this.request.pageSize]: this.state.pageSize,
+      [this.request.sort]:
+        this.state.currentSortColumn.charAt(0).toUpperCase() +
+        this.state.currentSortColumn.slice(1),
+      [this.request.sortDirection]: this.state.sortDirection === 'asc' ? 1 : 0,
+      [this.request.search]: this.searchObj,
+    };
+    console.log(ApiObject);
+    return ApiObject;
   }
 
   getData() {
-    this.dataService.searchEntity(this.dataGridConfig.dataApi, {
-        pageNumber: this.state.pageNumber,
-        pageSize: this.state.pageSize,
-    }).subscribe(
-      (response: any) => {
-        this.state.displayedData = response[this.result.data];
-        this.state.total = response[this.result.total];
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    console.log(this.constructParams());
+    this.dataService
+      .searchEntity(this.dataGridConfig.dataApi, this.constructParams())
+      .subscribe(
+        (response: any) => {
+          this.state.displayedData = response[this.result.data];
+          this.state.total = response[this.result.total];
+          this.state.isEmpty = this.state.total === 0;
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
   toggleSingleActionStyle() {
     this.state.displayType =
@@ -121,24 +128,22 @@ export class DataGridComponent {
   }
   // #endregion
 
-
-
   //#region Helper Functions
   navigateToEmpty() {
     this.navigation.navigateTo('empty');
   }
   //#endregion
 
-
-
   // #region UI
+  restCurrentPage() {
+    this.state.pageNumber = 1;
+  }
   isActionHeader(action: Action) {
     if (!action.actionDisplayType) return false;
     return action.actionDisplayType === ActionDisplayType.HEADER;
   }
   isEmpty(): boolean {
-    if (this.state.displayedData === undefined) return false;
-    else return this.state.displayedData.length === 0 && !this.state.isLoading;
+    return this.state.isEmpty;
   }
   isLoading(): boolean {
     return this.state.isLoading;
@@ -161,23 +166,19 @@ export class DataGridComponent {
   }
   // #endregion
 
-  
   // #region Search
   onSearch(value: string) {
-    this.dataGridService.emitResetPagSingal();
-    if (value.length > 3 && value !== this.state.searchValue) {
-      this.state.searchValue = value;
-      this.state.pageNumber = 0;
-      this.getData();
-    }
+    this.searchObj.enName = value;
+    this.restCurrentPage();
+    this.getData();
   }
   strip(value: string) {
     this.search.nativeElement.value = value.replace(/^\s+/, '');
   }
   onCancelSearch() {
-    this.dataGridService.emitResetPagSingal();
+    this.restCurrentPage();
     this.search.nativeElement.value = '';
-    this.state.searchValue = '';
+    this.searchObj.enName = '';
     this.getData();
   }
   // #endregion
@@ -272,6 +273,7 @@ export class DataGridComponent {
       this.state.sortDirection = 'asc';
     }
     this.getData();
+    this.restCurrentPage();
   }
   // #endregion
 
@@ -317,5 +319,3 @@ export class DataGridComponent {
   // }
   // // #endregion
 }
-
-

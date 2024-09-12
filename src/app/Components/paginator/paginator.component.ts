@@ -70,6 +70,7 @@ export class PaginatorComponent {
   }
 
   onPageSizeChange(): void {
+    this.currentPage = 1;
     this.emitPagination();
   }
 }
