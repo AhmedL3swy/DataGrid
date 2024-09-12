@@ -5,7 +5,10 @@
 <button class="btn btn-primary" (click)="toggleSingleActionStyle()">
   Toggle Signle Action Style
 </button>
+
+
 <div class="row">
+    <!-- Search -->
   <div class="col-6">
     <input
       type="text"
@@ -16,6 +19,7 @@
       (input)="strip(search.value)"
     />
   </div>
+
   <div class="col-3">
     <button class="btn btn-primary" (click)="onSearch(search.value)">
       Search
@@ -26,6 +30,8 @@
     </button>
   </div>
 </div>
+<!-- End Search -->
+
 <table class="table">
   <!-- #region Headers -->
   <thead>
@@ -168,6 +174,8 @@
 <!-- Paginator Component -->
 <app-paginator
   [total]="state.total"
+  [pageSize]="state.pageSize"
+  [currentPage]="state.pageNumber"
   [paginationOptions]="paginatorOptions"
   (paginationChange)="onPaginationChange($event)"
 ></app-paginator>

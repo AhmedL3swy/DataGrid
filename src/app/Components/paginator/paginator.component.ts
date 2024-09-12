@@ -12,45 +12,33 @@ import { FormsModule } from '@angular/forms';
 })
 export class PaginatorComponent {
   @Input() total: number = 0;
+  @Input() currentPage: number = 1;
+  @Input() pageSize: number = 5;
   @Input() paginationOptions!: number[];
-  @Input() resetFlag!: boolean;
   @Output() paginationChange = new EventEmitter<{
-    limit: number;
-    skip: number;
+    pageNumber: number;
+    pageSize: number;
   }>();
   constructor(private dataGridService: DataGridService) {}
-  currentPage: number = 1;
-  pageSize: number = 5;
+ 
   ngOnInit(): void {
     this.pageSize = this.paginationOptions[0];
     this.emitPagination();
-    this.dataGridService.resetPagSignal.subscribe((value: boolean) => {
-      if (value) {
-        this.currentPage = 1;
-      }
-    });
   }
   ngOnChanges() {
-    if (this.resetFlag) {
-      this.currentPage = 1;
-    }
-    this.emitPagination();
+  
   }
   // Calculate the maximum number of pages
   get maxPage(): number {
     return Math.ceil(this.total / this.pageSize);
   }
-  get CurrentPage(): number {
-    if (this.resetFlag && this.currentPage != 1) {
-      this.currentPage = 1;
-    }
-    return this.currentPage;
-  }
+  
   // Emit the current limit and skip values
   private emitPagination(): void {
-    const skip = (this.currentPage - 1) * this.pageSize;
-    const limit = this.pageSize;
-    this.paginationChange.emit({ limit, skip });
+    this.paginationChange.emit({
+      pageNumber: this.currentPage,
+      pageSize: this.pageSize,
+    });
   }
 
   onPrev(): void {
@@ -82,7 +70,6 @@ export class PaginatorComponent {
   }
 
   onPageSizeChange(): void {
-    this.dataGridService.emitResetPagSingal();
     this.emitPagination();
   }
 }
