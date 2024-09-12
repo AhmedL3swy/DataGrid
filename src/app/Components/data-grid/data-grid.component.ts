@@ -73,6 +73,10 @@ export class DataGridComponent {
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
   // #endregion
 
+  // #region FIlter
+  filter: any[] = [];
+
+  // #endregion
   // #region Constructor
   constructor(
     private dataService: ApiService,
@@ -86,6 +90,7 @@ export class DataGridComponent {
   @ViewChild('searchField') searchField!: ElementRef;
   @ViewChild('fromDate') fromDate!: ElementRef;
   @ViewChild('toDate') toDate!: ElementRef;
+  @ViewChild('category') category!: ElementRef;
   // #region LifeCycle Hooks
   ngOnInit() {
     this.translate.use(localStorage.getItem('lang') || 'en');
@@ -110,7 +115,10 @@ export class DataGridComponent {
           end: range.end,
         };
       }),
-      [this.request.include]: "Category",
+      [this.request.include]: 'Category',
+      nestedSearch: 'Category',
+      nestedSearchField: 'Id',
+      nestedSearchValue: this.category?.nativeElement.value || -1,
     };
 
     console.log(ApiObject);
@@ -126,6 +134,14 @@ export class DataGridComponent {
           this.state.displayedData = response[this.result.data];
           this.state.total = response[this.result.total];
           this.state.isEmpty = this.state.total === 0;
+          if (this.filter.length === 0) {
+            this.filter = [
+              ...new Set(
+                this.state.displayedData!.map((item: any) => item.categoryId)
+              ),
+            ] as string[];
+          }
+
           console.log(response);
         },
         (error) => {
@@ -232,6 +248,11 @@ export class DataGridComponent {
   onPaginationChange(event: any) {
     this.state.pageSize = event.pageSize;
     this.state.pageNumber = event.pageNumber;
+    this.getData();
+  }
+  onFilter(option: any) {
+    this.restCurrentPage();
+
     this.getData();
   }
   // #endregion
