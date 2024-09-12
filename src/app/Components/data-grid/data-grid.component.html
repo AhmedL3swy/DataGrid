@@ -6,20 +6,27 @@
   Toggle Signle Action Style
 </button>
 
-
 <div class="row">
-    <!-- Search -->
+  <div class="col-2">
+    <select class="form-control col-3" #searchField>
+      <option
+        *ngFor="let column of dataGridConfig.columns"
+        [value]="localizeField(column.field, column.isMultiLang!)"
+      >
+        {{ column.header | translate }}
+      </option>
+    </select>
+  </div>
   <div class="col-6">
     <input
       type="text"
-      class="form-control"
+      class="form-control d-inline"
       placeholder="Search"
       #search
       (keyup.enter)="onSearch(search.value)"
       (input)="strip(search.value)"
     />
   </div>
-
   <div class="col-3">
     <button class="btn btn-primary" (click)="onSearch(search.value)">
       Search
@@ -31,7 +38,33 @@
   </div>
 </div>
 <!-- End Search -->
-
+<!-- Date Range Search -->
+<div class="row">
+  <div class="col-3">
+    <input
+      type="date"
+      class="form-control d-inline"
+      placeholder="From"
+      #fromDate
+    />
+  </div>
+  <div class="col-3">
+    <input
+      type="date"
+      class="form-control d-inline"
+      placeholder="To"
+      #toDate
+    />
+  </div>
+  <div class="col-3">
+    <button class="btn btn-primary  d-inline" (click)="onDateSearch()">Search</button>
+    <!-- Cancel Search -->
+    <button class="btn btn-primary  d-inline" (click)="onCancelSearch()">
+      Reset Search
+    </button>
+  </div>
+</div>
+<!-- End Date Range Search -->
 <table class="table">
   <!-- #region Headers -->
   <thead>
@@ -52,8 +85,8 @@
         <!-- Sort -->
         <button class="btn" (click)="onSort(column)" *ngIf="column.sortable">
           {{
-            localizeField(column.field,column.isMultiLang!) == state.currentSortColumn &&
-            state.sortDirection === "asc"
+            localizeField(column.field, column.isMultiLang!) ==
+              state.currentSortColumn && state.sortDirection === "asc"
               ? "▲"
               : "▼"
           }}
@@ -134,7 +167,7 @@
         <!-- if Multi field -->
         <span *ngIf="column.isMultiLang">
           <!-- {{ row[column.multiField![currentLocale()]] }} -->
-          {{ row[localizeField(column.field,column.isMultiLang)] }}
+          {{ row[localizeField(column.field, column.isMultiLang)] }}
         </span>
         <!-- else -->
         <span *ngIf="!column.isMultiLang">

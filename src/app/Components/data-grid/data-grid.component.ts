@@ -55,27 +55,19 @@ export class DataGridComponent {
     sortDirection: 'sortDirection',
     search: 'search',
     rangeSearch: 'rangeSearch',
-    };
+  };
   result = {
     data: 'data',
     total: 'total',
   };
-  searchObj = {
-    id: null,
-    arName: null as string | null,
-    enName: null as string | null,
-    description: null,
-    enDescription: null,
-    price: null,
-    stock: null,
-  };
+  searchObj: any = {};
   rangeSearchObj = [
     {
-      field:'xD',
-      start: "1",
-      end: "100",
+      field: 'xD',
+      start: '1',
+      end: '100',
     },
-  ]
+  ];
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
   // #endregion
 
@@ -89,6 +81,9 @@ export class DataGridComponent {
   // #endregion
 
   @ViewChild('search') search!: ElementRef;
+  @ViewChild('searchField') searchField!: ElementRef;
+  @ViewChild('fromDate') fromDate!: ElementRef;
+  @ViewChild('toDate') toDate!: ElementRef;
   // #region LifeCycle Hooks
   ngOnInit() {
     this.translate.use(localStorage.getItem('lang') || 'en');
@@ -182,20 +177,42 @@ export class DataGridComponent {
 
   // #region Search
   onSearch(value: string) {
-    this.searchObj.enName = value;
+    // this.MakeSearchFieldsNUll();
+    const SearchField = this.searchField.nativeElement.value;
+    const SearchObj = {
+      [SearchField]: value,
+    };
+    this.searchObj = SearchObj;
+    // (this.searchObj as any)[SearchField] = value;
     this.restCurrentPage();
     this.getData();
   }
+  // MakeSearchFieldsNUll() {
+  //   Object.keys(this.searchObj).forEach((key) => {
+  //     (this.searchObj as any)[key] = null;
+  //   });
+  // }
   strip(value: string) {
     this.search.nativeElement.value = value.replace(/^\s+/, '');
   }
   onCancelSearch() {
     this.restCurrentPage();
-    this.search.nativeElement.value = '';
-    this.searchObj.enName = '';
+    this.searchObj = {};
     this.getData();
   }
   // #endregion
+  onDateSearch() {
+    const fromDate = this.fromDate.nativeElement.value;
+    const toDate = this.toDate.nativeElement.value;
+    this.rangeSearchObj = [
+      {
+        field: 'AddedDate',
+        start: fromDate,
+        end: toDate,
+      },
+    ];
+    this.getData();
+  }
 
   // #region Pagination
   onPaginationChange(event: any) {

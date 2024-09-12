@@ -60,6 +60,7 @@ export class GridContainerComponent {
         header: 'headers.Description',
         field: 'description',
         isMultiLang: true,
+        sortable: true
       },
       {
         header: 'headers.Price',
