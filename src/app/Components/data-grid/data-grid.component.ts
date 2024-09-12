@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { DataGridService } from '../../Services/data-grid.service';
 import { Action, ActionType } from './../../types/action-config';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
@@ -55,6 +56,7 @@ export class DataGridComponent {
     sortDirection: 'sortDirection',
     search: 'search',
     rangeSearch: 'rangeSearch',
+    include: 'include',
   };
   result = {
     data: 'data',
@@ -108,7 +110,9 @@ export class DataGridComponent {
           end: range.end,
         };
       }),
+      [this.request.include]: "Category",
     };
+
     console.log(ApiObject);
     return ApiObject;
   }
@@ -200,6 +204,7 @@ export class DataGridComponent {
     this.searchObj = {};
     this.getData();
   }
+
   // #endregion
   onDateSearch() {
     const fromDate = this.fromDate.nativeElement.value;
@@ -213,7 +218,16 @@ export class DataGridComponent {
     ];
     this.getData();
   }
-
+  onCancelDateSearch() {
+    this.fromDate.nativeElement.value = '';
+    this.toDate.nativeElement.value = '';
+    this.restCurrentPage();
+    this.rangeSearchObj = [];
+    this.getData();
+  }
+  isDateDisabled() {
+    return false;
+  }
   // #region Pagination
   onPaginationChange(event: any) {
     this.state.pageSize = event.pageSize;

@@ -10,6 +10,7 @@
     "Description": "Description",
     "Price": "Price",
     "Stock": "Stock",
-    "AddedOn": "Added On"
+    "AddedOn": "Added On",
+    "enCategoryName": "English Category Name"
   }
 }

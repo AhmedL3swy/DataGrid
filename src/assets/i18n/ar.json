@@ -10,6 +10,7 @@
     "Description": "الوصف",
     "Price": "السعر",
     "Stock": "المخزون",
-    "AddedOn": "تاريخ الإضافة"
+    "AddedOn": "تاريخ الإضافة",
+    "enCategoryName": "اسم الفئة بالإنجليزية"
   }
 }

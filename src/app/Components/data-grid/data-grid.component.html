@@ -49,17 +49,18 @@
     />
   </div>
   <div class="col-3">
-    <input
-      type="date"
-      class="form-control d-inline"
-      placeholder="To"
-      #toDate
-    />
+    <input type="date" class="form-control d-inline" placeholder="To" #toDate />
   </div>
   <div class="col-3">
-    <button class="btn btn-primary  d-inline" (click)="onDateSearch()">Search</button>
+    <button
+      class="btn btn-primary d-inline"
+      (click)="onDateSearch()"
+      [disabled]="isDateDisabled()"
+    >
+      Search
+    </button>
     <!-- Cancel Search -->
-    <button class="btn btn-primary  d-inline" (click)="onCancelSearch()">
+    <button class="btn btn-primary d-inline" (click)="onCancelDateSearch()">
       Reset Search
     </button>
   </div>
