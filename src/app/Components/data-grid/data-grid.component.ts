@@ -103,6 +103,7 @@ export class DataGridComponent {
   // #region LifeCycle Hooks
   ngOnInit() {
         this.translate.use(localStorage.getItem('lang') || 'en');
+        this.getData();
   }
 
   // #endregion
