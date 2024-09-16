@@ -102,9 +102,9 @@ export class DataGridComponent {
   @ViewChild('category') category!: ElementRef;
   // #region LifeCycle Hooks
   ngOnInit() {
-    this.translate.use(localStorage.getItem('lang') || 'en');
-    this.getData();
+        this.translate.use(localStorage.getItem('lang') || 'en');
   }
+
   // #endregion
 
   // #region Initialization And APi Calls
