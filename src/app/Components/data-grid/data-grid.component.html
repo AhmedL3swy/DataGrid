@@ -171,20 +171,18 @@
       <!-- #endregion -->
 
       <!-- #region Single Action if SingleDisplay specifed -->
-      <tr *ngIf="!isHeaderDisplay() && !state.multiMode">
-        <td *ngFor="let action of dataGridConfig.actions">
-          <button
-            *ngIf="
-              isEnableSingleAction(action) &&
-              isActionHeader(action) &&
-              state.seletedEntity
-            "
-            class="btn btn-primary"
-            (click)="action.callback(state.seletedEntity)"
-          >
-            {{ action.name | translate }}
-          </button>
-        </td>
+      <tr *ngIf="!isHeaderDisplay() && !state.multiMode && isSelectedEntity">
+        <ng-container *ngIf="state.seletedEntity">
+          <td *ngFor="let action of dataGridConfig.actions">
+            <button
+              *ngIf="isEnableSingleAction(action) && isActionHeader(action)"
+              class="btn btn-primary"
+              (click)="action.callback(state.seletedEntity)"
+            >
+              {{ action.name | translate }}
+            </button>
+          </td>
+        </ng-container>
       </tr>
       <!-- #endregion -->
 
