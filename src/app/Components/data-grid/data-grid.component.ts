@@ -253,6 +253,7 @@ export class DataGridComponent {
         end: toDate,
       },
     ];
+    this.restCurrentPage();
     this.getData();
   }
 
