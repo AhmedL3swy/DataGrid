@@ -57,6 +57,8 @@ export class DataGridComponent {
     search: 'search',
     rangeSearch: 'rangeSearch',
     include: 'include',
+    nestedSearch: 'nestedSearch',
+    searchKeyWord: 'searchKeyWord',
   };
   result = {
     data: 'data',
@@ -70,7 +72,14 @@ export class DataGridComponent {
       end: '100',
     },
   ];
+  nestedSearchObj = [
+    {
+      relativePath: 'Category.EnName',
+      value: '',
+    },
+  ];
   paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
+  searchKeyWord = '';
   // #endregion
 
   // #region FIlter
@@ -116,9 +125,13 @@ export class DataGridComponent {
         };
       }),
       [this.request.include]: 'Category',
-      nestedSearch: 'Category',
-      nestedSearchField: 'Id',
-      nestedSearchValue: this.category?.nativeElement.value || -1,
+      [this.request.nestedSearch]: this.nestedSearchObj.map((nested) => {
+        return {
+          relativePath: nested.relativePath,
+          value: nested.value,
+        };
+      }),
+      [this.request.searchKeyWord]: this.searchKeyWord,
     };
 
     console.log(ApiObject);
@@ -137,7 +150,9 @@ export class DataGridComponent {
           if (this.filter.length === 0) {
             this.filter = [
               ...new Set(
-                this.state.displayedData!.map((item: any) => item.categoryId)
+                this.state.displayedData!.map(
+                  (item: any) => item.enCategoryName
+                )
               ),
             ] as string[];
           }
@@ -198,12 +213,13 @@ export class DataGridComponent {
   // #region Search
   onSearch(value: string) {
     // this.MakeSearchFieldsNUll();
-    const SearchField = this.searchField.nativeElement.value;
-    const SearchObj = {
-      [SearchField]: value,
-    };
-    this.searchObj = SearchObj;
-    // (this.searchObj as any)[SearchField] = value;
+    // const SearchField = this.searchField.nativeElement.value;
+    // const SearchObj = {
+    //   [SearchField]: value,
+    // };
+    // this.searchObj = SearchObj;
+    // // (this.searchObj as any)[SearchField] = value;
+    this.searchKeyWord = value;
     this.restCurrentPage();
     this.getData();
   }
@@ -217,7 +233,7 @@ export class DataGridComponent {
   }
   onCancelSearch() {
     this.restCurrentPage();
-    this.searchObj = {};
+    this.searchKeyWord = '';
     this.getData();
   }
 
@@ -225,6 +241,10 @@ export class DataGridComponent {
   onDateSearch() {
     const fromDate = this.fromDate.nativeElement.value;
     const toDate = this.toDate.nativeElement.value;
+    if(!this.isValidDate(fromDate) || !this.isValidDate(toDate)) {
+      alert('Please enter valid date');
+      return;
+    }
     this.rangeSearchObj = [
       {
         field: 'AddedDate',
@@ -233,6 +253,9 @@ export class DataGridComponent {
       },
     ];
     this.getData();
+  }
+  isValidDate(date: string) {
+    return date.match(/^\d{4}-\d{2}-\d{2}$/);
   }
   onCancelDateSearch() {
     this.fromDate.nativeElement.value = '';
@@ -252,6 +275,12 @@ export class DataGridComponent {
   }
   onFilter(option: any) {
     this.restCurrentPage();
+    this.nestedSearchObj = [
+      {
+        relativePath: 'Category.EnName',
+        value: option,
+      },
+    ];
 
     this.getData();
   }

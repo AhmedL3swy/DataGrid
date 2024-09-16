@@ -8,20 +8,20 @@
 
 <div class="row">
   <div class="col-2">
-    <select class="form-control col-3" #searchField>
+    <!-- <select class="form-control col-3" #searchField>
       <option
         *ngFor="let column of dataGridConfig.columns"
         [value]="localizeField(column.field, column.isMultiLang!)"
       >
         {{ column.header | translate }}
       </option>
-    </select>
+    </select> -->
   </div>
   <div class="col-6">
     <input
       type="text"
       class="form-control d-inline"
-      placeholder="Search"
+      placeholder="Search By Arabic Or English Name"
       #search
       (keyup.enter)="onSearch(search.value)"
       (input)="strip(search.value)"
@@ -40,6 +40,9 @@
 <!-- End Search -->
 <!-- Date Range Search -->
 <div class="row">
+  <div class="col-2">
+
+  </div>
   <div class="col-3">
     <input
       type="date"
@@ -68,17 +71,21 @@
 <!-- End Date Range Search -->
 <!-- Add Filter By Cateogry -->
 <div class="row">
+   <div class="col-4"></div>
+    
+ 
   <div class="col-3">
-    <select class="form-control col-3" #category (change)="onFilter(category.value)">
-      <option value=-1>All</option>
-      <option
-        *ngFor="let option of filter"
-        [value]="option"
-      >
+    <select
+      class="form-control col-3"
+      #category
+      (change)="onFilter(category.value)"
+    >
+      <option value="">All</option>
+      <option *ngFor="let option of filter" [value]="option">
         {{ option }}
       </option>
     </select>
-</div>
+  </div>
   <table class="table">
     <!-- #region Headers -->
     <thead>
@@ -98,16 +105,30 @@
           <!-- {{'buttons.Edit' | translate}} -->
           <!-- Sort -->
           <button class="btn" (click)="onSort(column)" *ngIf="column.sortable">
-            <span *ngIf="localizeField(column.field, column.isMultiLang!) == state.currentSortColumn && state.sortDirection === 'asc'">
+            <span
+              *ngIf="
+                localizeField(column.field, column.isMultiLang!) ==
+                  state.currentSortColumn && state.sortDirection === 'asc'
+              "
+            >
               <i class="fas fa-sort-up"></i>
             </span>
-            <span *ngIf="localizeField(column.field, column.isMultiLang!) == state.currentSortColumn && state.sortDirection === 'desc'">
+            <span
+              *ngIf="
+                localizeField(column.field, column.isMultiLang!) ==
+                  state.currentSortColumn && state.sortDirection === 'desc'
+              "
+            >
               <i class="fas fa-sort-down"></i>
             </span>
-            <span *ngIf="localizeField(column.field, column.isMultiLang!) != state.currentSortColumn">
+            <span
+              *ngIf="
+                localizeField(column.field, column.isMultiLang!) !=
+                state.currentSortColumn
+              "
+            >
               <i class="fas fa-sort"></i>
             </span>
-            
           </button>
         </th>
       </tr>
