@@ -102,8 +102,16 @@ export class DataGridComponent {
   @ViewChild('category') category!: ElementRef;
   // #region LifeCycle Hooks
   ngOnInit() {
-        this.translate.use(localStorage.getItem('lang') || 'en');
-        
+    this.translate.use(localStorage.getItem('lang') || 'en');
+    document.addEventListener('keyup', (event: any) => {
+      if (event.key === 'Enter') {
+        this.onSearch(this.search.nativeElement.value);
+      }
+      if (event.key === 'Escape') {
+        this.onCancelSearch();
+      }
+    });
+
   }
 
   // #endregion
@@ -221,6 +229,12 @@ export class DataGridComponent {
     // this.searchObj = SearchObj;
     // // (this.searchObj as any)[SearchField] = value;
     this.searchKeyWord = value;
+    if (
+      !this.isEmptyDate(this.fromDate.nativeElement.value)||
+      !this.isEmptyDate(this.toDate.nativeElement.value)
+    ) {
+      this.onDateSearch();
+    }
     this.restCurrentPage();
     this.getData();
   }
@@ -234,6 +248,7 @@ export class DataGridComponent {
   }
   onCancelSearch() {
     this.search.nativeElement.value = '';
+    this.onCancelDateSearch();
     this.restCurrentPage();
     this.searchKeyWord = '';
     this.getData();
@@ -243,17 +258,18 @@ export class DataGridComponent {
   onDateSearch() {
     const fromDate = this.fromDate.nativeElement.value;
     const toDate = this.toDate.nativeElement.value;
-    if (!this.isValidDate(fromDate) || !this.isValidDate(toDate)) {
-      alert('Please enter valid date');
+    if (!this.isValidDate(fromDate) || !this.isValidDate(toDate) ) {
+      alert('Please enter valid date Range');
       return;
+    } else {
+      this.rangeSearchObj = [
+        {
+          field: 'AddedDate',
+          start: fromDate,
+          end: toDate,
+        },
+      ];
     }
-    this.rangeSearchObj = [
-      {
-        field: 'AddedDate',
-        start: fromDate,
-        end: toDate,
-      },
-    ];
     this.restCurrentPage();
     this.getData();
   }
@@ -261,12 +277,14 @@ export class DataGridComponent {
   isValidDate(date: string) {
     return date.match(/^\d{4}-\d{2}-\d{2}$/);
   }
+  isEmptyDate(date: string) {
+    return date === '';
+  }
   onCancelDateSearch() {
     this.fromDate.nativeElement.value = '';
     this.toDate.nativeElement.value = '';
     this.restCurrentPage();
     this.rangeSearchObj = [];
-    this.getData();
   }
   isDateDisabled() {
     return false;
@@ -288,7 +306,7 @@ export class DataGridComponent {
 
     this.getData();
   }
-  onCancelFilter(){
+  onCancelFilter() {
     this.restCurrentPage();
     this.nestedSearchObj = [];
     this.getData();

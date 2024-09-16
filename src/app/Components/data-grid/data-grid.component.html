@@ -1,14 +1,15 @@
-<button class="btn btn-primary" (click)="navigateToEmpty()">
-  Navigate to Empty
-</button>
-<button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
-<button class="btn btn-primary" (click)="toggleSingleActionStyle()">
-  Toggle Signle Action Style
-</button>
+<div (keyup.enter)="onSearch(search.value)">
+  <button class="btn btn-primary" (click)="navigateToEmpty()">
+    Navigate to Empty
+  </button>
+  <button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
+  <button class="btn btn-primary" (click)="toggleSingleActionStyle()">
+    Toggle Signle Action Style
+  </button>
 
-<div class="row">
-  <div class="col-2">
-    <!-- <select class="form-control col-3" #searchField>
+  <div class="row">
+    <div class="col-2">
+      <!-- <select class="form-control col-3" #searchField>
       <option
         *ngFor="let column of dataGridConfig.columns"
         [value]="localizeField(column.field, column.isMultiLang!)"
@@ -16,43 +17,48 @@
         {{ column.header | translate }}
       </option>
     </select> -->
+    </div>
+    <div class="col-6">
+      <input
+        type="text"
+        class="form-control d-inline"
+        placeholder="Search By Arabic Or English Name"
+        #search
+        (keyup.enter)="onSearch(search.value)"
+        (input)="strip(search.value)"
+      />
+    </div>
+    <div class="col-3">
+      <button class="btn btn-primary" (click)="onSearch(search.value)">
+        Search
+      </button>
+      <!-- Cancel Search -->
+      <button class="btn btn-primary" (click)="onCancelSearch()">
+        Reset Search
+      </button>
+    </div>
   </div>
-  <div class="col-6">
-    <input
-      type="text"
-      class="form-control d-inline"
-      placeholder="Search By Arabic Or English Name"
-      #search
-      (keyup.enter)="onSearch(search.value)"
-      (input)="strip(search.value)"
-    />
-  </div>
-  <div class="col-3">
-    <button class="btn btn-primary" (click)="onSearch(search.value)">
-      Search
-    </button>
-    <!-- Cancel Search -->
-    <button class="btn btn-primary" (click)="onCancelSearch()">
-      Reset Search
-    </button>
-  </div>
-</div>
-<!-- End Search -->
-<!-- Date Range Search -->
-<div class="row">
-  <div class="col-2"></div>
-  <div class="col-3">
-    <input
-      type="date"
-      class="form-control d-inline"
-      placeholder="From"
-      #fromDate
-    />
-  </div>
-  <div class="col-3">
-    <input type="date" class="form-control d-inline" placeholder="To" #toDate />
-  </div>
-  <div class="col-3">
+  <!-- End Search -->
+  <!-- Date Range Search -->
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-3">
+      <input
+        type="date"
+        class="form-control d-inline"
+        placeholder="From"
+        #fromDate
+      />
+    </div>
+    <div class="col-3">
+      <input
+        type="date"
+        class="form-control d-inline"
+        placeholder="To"
+        #toDate
+      />
+    </div>
+    <!-- <div class="col-3">
     <button
       class="btn btn-primary d-inline"
       (click)="onDateSearch()"
@@ -60,192 +66,198 @@
     >
       Search
     </button>
-    <!-- Cancel Search -->
     <button class="btn btn-primary d-inline" (click)="onCancelDateSearch()">
       Reset Search
     </button>
+  </div> -->
   </div>
-</div>
-<!-- End Date Range Search -->
-<!-- Add Filter By Cateogry -->
-<div class="row">
-  <div class="col-4"></div>
+  <!-- End Date Range Search -->
+  <!-- Add Filter By Cateogry -->
+  <div class="row">
+    <div class="col-4"></div>
 
-  <div class="col-3">
-    <select
-      class="form-control d-inline"
-      #category
-      (change)="onFilter(category.value)"
-    >
-      <option value="">All</option>
-      <option *ngFor="let option of filter" [value]="option">
-        {{ option }}
-      </option>
-    </select>
+    <div class="col-3">
+      <select
+        class="form-control d-inline"
+        #category
+        (change)="onFilter(category.value)"
+      >
+        <option value="">All</option>
+        <option *ngFor="let option of filter" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
   </div>
-</div>
-<div>
-  <table class="table">
-    <!-- #region Headers -->
-    <thead>
-      <tr class="bg-danger">
-        <!-- Toggle All Check Box -->
-        <th>
-          <input
-            title="Checkbox"
-            type="checkbox"
-            (change)="toggleSelectAll()"
-            [checked]="isAllSelected()"
-          />
-        </th>
-        <!-- Dynamically Generate Headers Based on Config -->
-        <th *ngFor="let column of dataGridConfig.columns">
-          {{ column.header | translate }}
-          <!-- {{'buttons.Edit' | translate}} -->
-          <!-- Sort -->
-          <button class="btn" (click)="onSort(column)" *ngIf="column.sortable">
-            <span
-              *ngIf="
-                localizeField(column.field, column.isMultiLang!) ==
-                  state.currentSortColumn && state.sortDirection === 'asc'
-              "
+  <div>
+    <table class="table">
+      <!-- #region Headers -->
+      <thead>
+        <tr class="bg-danger">
+          <!-- Toggle All Check Box -->
+          <th>
+            <input
+              title="Checkbox"
+              type="checkbox"
+              (change)="toggleSelectAll()"
+              [checked]="isAllSelected()"
+            />
+          </th>
+          <!-- Dynamically Generate Headers Based on Config -->
+          <th *ngFor="let column of dataGridConfig.columns">
+            {{ column.header | translate }}
+            <!-- {{'buttons.Edit' | translate}} -->
+            <!-- Sort -->
+            <button
+              class="btn"
+              (click)="onSort(column)"
+              *ngIf="column.sortable"
             >
-              <i class="fas fa-sort-up"></i>
-            </span>
-            <span
-              *ngIf="
-                localizeField(column.field, column.isMultiLang!) ==
-                  state.currentSortColumn && state.sortDirection === 'desc'
-              "
-            >
-              <i class="fas fa-sort-down"></i>
-            </span>
-            <span
-              *ngIf="
-                localizeField(column.field, column.isMultiLang!) !=
-                state.currentSortColumn
-              "
-            >
-              <i class="fas fa-sort"></i>
-            </span>
-          </button>
-        </th>
-      </tr>
-    </thead>
-    <!-- #endregion Headers -->
-    <!--#region Loading -->
-    <!-- <tbody *ngIf="isLoading()">
+              <span
+                *ngIf="
+                  localizeField(column.field, column.isMultiLang!) ==
+                    state.currentSortColumn && state.sortDirection === 'asc'
+                "
+              >
+                <i class="fas fa-sort-up"></i>
+              </span>
+              <span
+                *ngIf="
+                  localizeField(column.field, column.isMultiLang!) ==
+                    state.currentSortColumn && state.sortDirection === 'desc'
+                "
+              >
+                <i class="fas fa-sort-down"></i>
+              </span>
+              <span
+                *ngIf="
+                  localizeField(column.field, column.isMultiLang!) !=
+                  state.currentSortColumn
+                "
+              >
+                <i class="fas fa-sort"></i>
+              </span>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <!-- #endregion Headers -->
+      <!--#region Loading -->
+      <!-- <tbody *ngIf="isLoading()">
     <dialog open>
       <div class="loader"></div>
     </dialog>
   </tbody> -->
-    <!-- #endregion -->
-
-    <tbody *ngIf="!isEmpty()">
-      <!--#region Bulk Actions -->
-      <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
-        <span *ngFor="let action of dataGridConfig.actions">
-          <button
-            *ngIf="isEnabledMultiAction(action)"
-            class="btn btn-primary"
-            (click)="action.callback(state.multiEntity)"
-          >
-            {{ action.name | translate }}
-          </button>
-        </span>
-      </tr>
       <!-- #endregion -->
 
-      <!--#region Single Action if Display Type ==HEADER -->
-      <tr *ngIf="isHeaderDisplay() && !state.multiMode && state.seletedEntity">
-        <td *ngFor="let action of dataGridConfig.actions">
-          <button
-            *ngIf="isEnableSingleAction(action)"
-            class="btn btn-primary"
-            (click)="action.callback(state.seletedEntity)"
-          >
-            {{ action.name | translate }}
-          </button>
-        </td>
-      </tr>
-      <!-- #endregion -->
+      <tbody *ngIf="!isEmpty()">
+        <!--#region Bulk Actions -->
+        <tr *ngIf="state.multiMode && isThereEnabledMultiActions()">
+          <span *ngFor="let action of dataGridConfig.actions">
+            <button
+              *ngIf="isEnabledMultiAction(action)"
+              class="btn btn-primary"
+              (click)="action.callback(state.multiEntity)"
+            >
+              {{ action.name | translate }}
+            </button>
+          </span>
+        </tr>
+        <!-- #endregion -->
 
-      <!-- #region Single Action if SingleDisplay specifed -->
-      <tr *ngIf="!isHeaderDisplay() && !state.multiMode && isSelectedEntity">
-        <ng-container *ngIf="state.seletedEntity">
+        <!--#region Single Action if Display Type ==HEADER -->
+        <tr
+          *ngIf="isHeaderDisplay() && !state.multiMode && state.seletedEntity"
+        >
           <td *ngFor="let action of dataGridConfig.actions">
             <button
-              *ngIf="isEnableSingleAction(action) && isActionHeader(action)"
+              *ngIf="isEnableSingleAction(action)"
               class="btn btn-primary"
               (click)="action.callback(state.seletedEntity)"
             >
               {{ action.name | translate }}
             </button>
           </td>
-        </ng-container>
-      </tr>
-      <!-- #endregion -->
+        </tr>
+        <!-- #endregion -->
 
-      <!-- Data Based on DisplayedData -->
-      <tr *ngFor="let row of state.displayedData">
-        <td>
-          <input
-            title="Checkbox"
-            type="checkbox"
-            (change)="toggleSelectEntity(row)"
-            [checked]="isSelectedEntity(row)"
-          />
-        </td>
-        <!-- Dynamic Data Rows -->
-        <!-- if Multi Field -->
+        <!-- #region Single Action if SingleDisplay specifed -->
+        <tr *ngIf="!isHeaderDisplay() && !state.multiMode && isSelectedEntity">
+          <ng-container *ngIf="state.seletedEntity">
+            <td *ngFor="let action of dataGridConfig.actions">
+              <button
+                *ngIf="isEnableSingleAction(action) && isActionHeader(action)"
+                class="btn btn-primary"
+                (click)="action.callback(state.seletedEntity)"
+              >
+                {{ action.name | translate }}
+              </button>
+            </td>
+          </ng-container>
+        </tr>
+        <!-- #endregion -->
 
-        <td *ngFor="let column of dataGridConfig.columns">
-          <!-- if Multi field -->
-          <span *ngIf="column.isMultiLang">
-            <!-- {{ row[column.multiField![currentLocale()]] }} -->
-            {{ row[localizeField(column.field, column.isMultiLang)] }}
-          </span>
-          <!-- else -->
-          <span *ngIf="!column.isMultiLang">
-            {{ row[column.field] }}
-          </span>
-        </td>
+        <!-- Data Based on DisplayedData -->
+        <tr *ngFor="let row of state.displayedData">
+          <td>
+            <input
+              title="Checkbox"
+              type="checkbox"
+              (change)="toggleSelectEntity(row)"
+              [checked]="isSelectedEntity(row)"
+            />
+          </td>
+          <!-- Dynamic Data Rows -->
+          <!-- if Multi Field -->
 
-        <!-- #region  ROW Actions -->
-        <td *ngFor="let action of dataGridConfig.actions">
-          <button
-            *ngIf="
-              action.type === ActionType.Single &&
-              action.enabled &&
-              !isHeaderDisplay() &&
-              !isActionHeader(action)
-            "
-            class="btn btn-primary"
-            (click)="action.callback(row)"
-          >
-            {{ action.name | translate }}
-          </button>
-        </td>
-        <!--#endregion -->
-      </tr>
-    </tbody>
+          <td *ngFor="let column of dataGridConfig.columns">
+            <!-- if Multi field -->
+            <span *ngIf="column.isMultiLang">
+              <!-- {{ row[column.multiField![currentLocale()]] }} -->
+              {{ row[localizeField(column.field, column.isMultiLang)] }}
+            </span>
+            <!-- else -->
+            <span *ngIf="!column.isMultiLang">
+              {{ row[column.field] }}
+            </span>
+          </td>
 
-    <!-- Empty Body -->
-    <tbody *ngIf="isEmpty()">
-      <tr>
-        <td colspan="100%">
-          <h1 class="text-center">No Data</h1>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <!-- #region  ROW Actions -->
+          <td *ngFor="let action of dataGridConfig.actions">
+            <button
+              *ngIf="
+                action.type === ActionType.Single &&
+                action.enabled &&
+                !isHeaderDisplay() &&
+                !isActionHeader(action)
+              "
+              class="btn btn-primary"
+              (click)="action.callback(row)"
+            >
+              {{ action.name | translate }}
+            </button>
+          </td>
+          <!--#endregion -->
+        </tr>
+      </tbody>
 
-  <!-- Paginator Component -->
-  <app-paginator
-    [total]="state.total"
-    [pageSize]="state.pageSize"
-    [currentPage]="state.pageNumber"
-    [paginationOptions]="paginatorOptions"
-    (paginationChange)="onPaginationChange($event)"
-  ></app-paginator>
+      <!-- Empty Body -->
+      <tbody *ngIf="isEmpty()">
+        <tr>
+          <td colspan="100%">
+            <h1 class="text-center">No Data</h1>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Paginator Component -->
+    <app-paginator
+      [total]="state.total"
+      [pageSize]="state.pageSize"
+      [currentPage]="state.pageNumber"
+      [paginationOptions]="paginatorOptions"
+      (paginationChange)="onPaginationChange($event)"
+    ></app-paginator>
+  </div>
 </div>
