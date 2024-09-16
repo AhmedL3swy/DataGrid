@@ -67,9 +67,9 @@ export class DataGridComponent {
   searchObj: any = {};
   rangeSearchObj = [
     {
-      field: 'xD',
-      start: '1',
-      end: '100',
+      field: '',
+      start: '',
+      end: '',
     },
   ];
   nestedSearchObj = [
@@ -232,6 +232,7 @@ export class DataGridComponent {
     this.search.nativeElement.value = value.replace(/^\s+/, '');
   }
   onCancelSearch() {
+    this.search.nativeElement.value = '';
     this.restCurrentPage();
     this.searchKeyWord = '';
     this.getData();
@@ -241,7 +242,7 @@ export class DataGridComponent {
   onDateSearch() {
     const fromDate = this.fromDate.nativeElement.value;
     const toDate = this.toDate.nativeElement.value;
-    if(!this.isValidDate(fromDate) || !this.isValidDate(toDate)) {
+    if (!this.isValidDate(fromDate) || !this.isValidDate(toDate)) {
       alert('Please enter valid date');
       return;
     }
@@ -254,6 +255,7 @@ export class DataGridComponent {
     ];
     this.getData();
   }
+
   isValidDate(date: string) {
     return date.match(/^\d{4}-\d{2}-\d{2}$/);
   }
@@ -282,6 +284,11 @@ export class DataGridComponent {
       },
     ];
 
+    this.getData();
+  }
+  onCancelFilter(){
+    this.restCurrentPage();
+    this.nestedSearchObj = [];
     this.getData();
   }
   // #endregion
