@@ -40,9 +40,7 @@
 <!-- End Search -->
 <!-- Date Range Search -->
 <div class="row">
-  <div class="col-2">
-
-  </div>
+  <div class="col-2"></div>
   <div class="col-3">
     <input
       type="date"
@@ -71,9 +69,8 @@
 <!-- End Date Range Search -->
 <!-- Add Filter By Cateogry -->
 <div class="row">
-   <div class="col-4"></div>
-    
- 
+  <div class="col-4"></div>
+
   <div class="col-3">
     <select
       class="form-control d-inline"
@@ -84,8 +81,10 @@
       <option *ngFor="let option of filter" [value]="option">
         {{ option }}
       </option>
-    </select> 
+    </select>
   </div>
+</div>
+<div>
   <table class="table">
     <!-- #region Headers -->
     <thead>

@@ -80,7 +80,7 @@ export class GridContainerComponent {
       {
         header: 'headers.enCategoryName',
         field: 'enCategoryName',
-        sortable: true,
+        sortable: false,
       },
     ],
     actions: [
