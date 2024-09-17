@@ -30,13 +30,7 @@ export class GridContainerComponent {
     alert('edit' + JSON.stringify(entity));
   }
   delete(entity: any) {
-    this.ApiService.deleteEntity(
-      'https://dummyjson.com/products',
-      entity.id
-    ).subscribe((res) => {
-      console.log(res);
-      this.resetGrid();
-    });
+    alert(' delete logic' + JSON.stringify(entity));
   }
   bulkDelete(entities: any[]) {
     alert('bulk delete logic' + JSON.stringify(entities));

@@ -14,6 +14,7 @@ import { HttpParams } from '@angular/common/http';
 import { NavigationService } from '../../Services/navigation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-data-grid',
@@ -101,6 +102,7 @@ export class DataGridComponent {
   @ViewChild('toDate') toDate!: ElementRef;
   @ViewChild('category') category!: ElementRef;
   // #region LifeCycle Hooks
+  searchSubject : Subject<string> = new Subject<string>();
   ngOnInit() {
     this.translate.use(localStorage.getItem('lang') || 'en');
     document.addEventListener('keyup', (event: any) => {
@@ -111,7 +113,18 @@ export class DataGridComponent {
         this.onCancelSearch();
       }
     });
-
+    this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
+      this.searchKeyWord = searchTerm;
+      if (
+        !this.isEmptyDate(this.fromDate.nativeElement.value) ||
+        !this.isEmptyDate(this.toDate.nativeElement.value)
+      ) {
+        this.onDateSearch();
+      }
+      this.restCurrentPage();
+      this.emptySelected();
+      this.getData();
+    });
   }
 
   // #endregion
@@ -228,15 +241,19 @@ export class DataGridComponent {
     // };
     // this.searchObj = SearchObj;
     // // (this.searchObj as any)[SearchField] = value;
-    this.searchKeyWord = value;
-    if (
-      !this.isEmptyDate(this.fromDate.nativeElement.value)||
-      !this.isEmptyDate(this.toDate.nativeElement.value)
-    ) {
-      this.onDateSearch();
-    }
-    this.restCurrentPage();
-    this.getData();
+    // if (value===this.searchKeyWord ) return;
+    this.searchSubject.next(value);
+    // this.searchKeyWord = value;
+    // if (
+    //   !this.isEmptyDate(this.fromDate.nativeElement.value) ||
+    //   !this.isEmptyDate(this.toDate.nativeElement.value)
+    // ) {
+    //   this.onDateSearch();
+    // }
+    // this.restCurrentPage();
+    // this.emptySelected();
+    // this.getData();
+
   }
   // MakeSearchFieldsNUll() {
   //   Object.keys(this.searchObj).forEach((key) => {
@@ -258,7 +275,7 @@ export class DataGridComponent {
   onDateSearch() {
     const fromDate = this.fromDate.nativeElement.value;
     const toDate = this.toDate.nativeElement.value;
-    if (!this.isValidDate(fromDate) || !this.isValidDate(toDate) ) {
+    if (!this.isValidDate(fromDate) || !this.isValidDate(toDate)) {
       alert('Please enter valid date Range');
       return;
     } else {
@@ -336,9 +353,9 @@ export class DataGridComponent {
   }
 
   toggleSelectEntity(entity: any) {
-    if (this.state.seletedEntity == entity) {
-      this.state.seletedEntity = null;
-    }
+    // if (this.state.seletedEntity == entity) {
+    //   this.state.seletedEntity = null;
+    // }
     const index = this.state.multiEntity.indexOf(entity);
     if (index > -1) {
       this.state.multiEntity.splice(index, 1);
@@ -352,6 +369,12 @@ export class DataGridComponent {
     return this.state.multiEntity.some(
       (e: any) => e[this.state.uniqueKey] === entity[this.state.uniqueKey]
     );
+  }
+  emptySelected()
+  {
+    this.state.multiEntity = [];
+    this.state.seletedEntity = null;
+    this.setMultiMode();
   }
   // #endregion
 
