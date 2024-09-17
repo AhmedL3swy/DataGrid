@@ -4,7 +4,7 @@
   </button>
   <button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
   <button class="btn btn-primary" (click)="toggleSingleActionStyle()">
-    Toggle Signle Action Style
+    Toggle Single Action Style
   </button>
 
   <div class="row">
@@ -89,8 +89,8 @@
       </select>
     </div>
   </div>
-  <div>
-    <table class="table">
+  <div style="overflow-x: auto;">
+    <table class="table ">
       <!-- #region Headers -->
       <thead>
         <tr class="bg-danger">
@@ -113,31 +113,34 @@
               (click)="onSort(column)"
               *ngIf="column.sortable"
             >
+             
               <span
-                *ngIf="
+                
+              >
+                <i *ngIf="
                   localizeField(column.field, column.isMultiLang!) ==
                     state.currentSortColumn && state.sortDirection === 'asc'
-                "
-              >
-                <i class="fas fa-sort-up"></i>
-              </span>
-              <span
-                *ngIf="
+                " class="fas fa-sort-up"></i>
+                <i *ngIf="
                   localizeField(column.field, column.isMultiLang!) ==
                     state.currentSortColumn && state.sortDirection === 'desc'
-                "
-              >
-                <i class="fas fa-sort-down"></i>
-              </span>
-              <span
-                *ngIf="
+                " class="fas fa-sort-down"></i>
+                <i *ngIf="
                   localizeField(column.field, column.isMultiLang!) !=
                   state.currentSortColumn
-                "
-              >
-                <i class="fas fa-sort"></i>
+                " class="fas fa-sort"></i>
               </span>
+              
+            
             </button>
+            <button
+              class="btn"
+              *ngIf="!column.sortable"
+            >
+              <span
+                ><i class="fas "></i></span
+              >
+          </button>
           </th>
         </tr>
       </thead>
@@ -167,13 +170,13 @@
 
         <!--#region Single Action if Display Type ==HEADER -->
         <tr
-          *ngIf="isHeaderDisplay() && !state.multiMode && state.seletedEntity"
+          *ngIf="isHeaderDisplay() && !state.multiMode && state.selectedEntity"
         >
           <td *ngFor="let action of dataGridConfig.actions">
             <button
               *ngIf="isEnableSingleAction(action)"
               class="btn btn-primary"
-              (click)="action.callback(state.seletedEntity)"
+              (click)="action.callback(state.selectedEntity)"
             >
               {{ action.name | translate }}
             </button>
@@ -183,12 +186,12 @@
 
         <!-- #region Single Action if SingleDisplay specifed -->
         <tr *ngIf="!isHeaderDisplay() && !state.multiMode && isSelectedEntity">
-          <ng-container *ngIf="state.seletedEntity">
+          <ng-container *ngIf="state.selectedEntity">
             <td *ngFor="let action of dataGridConfig.actions">
               <button
                 *ngIf="isEnableSingleAction(action) && isActionHeader(action)"
                 class="btn btn-primary"
-                (click)="action.callback(state.seletedEntity)"
+                (click)="action.callback(state.selectedEntity)"
               >
                 {{ action.name | translate }}
               </button>

@@ -1,16 +1,16 @@
-import { resolve } from 'node:path';
+import { NestedSearch, PaginatorOptions, RangeSearch } from './../../types/data-grid-config';
 import { DataGridService } from '../../Services/data-grid.service';
 import { Action, ActionType } from './../../types/action-config';
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import {
   ActionDisplayType,
   DataGridConfig,
+  GridState,
 } from '../../types/data-grid-config';
 import { ApiService } from '../../Services/fake-data-service.service';
 import { PaginatorComponent } from '../paginator/paginator.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpParams } from '@angular/common/http';
 import { NavigationService } from '../../Services/navigation.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,24 +32,25 @@ export class DataGridComponent {
 
   ActionType = ActionType;
 
-  //#region State
-  state = {
-    displayedData: [] as any[],
+  //#region State Management Object
+  state: GridState = {
+    displayedData: [],
     total: 1,
     pageSize: 5,
     pageNumber: 1,
-    seletedEntity: null as any,
-    multiEntity: [] as any[],
-    multiMode: false as boolean,
-    sortDirection: 'asc' as string,
-    currentSortColumn: '' as string,
-    uniqueKey: 'id' as string,
-    isEmpty: false as boolean,
-    isLoading: true as boolean,
-    language: 'en' as string,
-    searchValue: '' as string,
-    displayType: 'ROW' as ActionDisplayType,
+    selectedEntity: null,
+    multiEntity: [],
+    multiMode: false,
+    sortDirection: 'asc',
+    currentSortColumn: '',
+    uniqueKey: 'id',
+    isEmpty: false,
+    isLoading: true,
+    language: 'en',
+    searchValue: '',
+    displayType: ActionDisplayType.ROW,
   };
+  // Dictionary for resuest and result keys
   request = {
     pageNumber: 'pageNumber',
     pageSize: 'pageSize',
@@ -65,22 +66,24 @@ export class DataGridComponent {
     data: 'data',
     total: 'total',
   };
+  // #endregion
+  // Other Helper Objects
   searchObj: any = {};
-  rangeSearchObj = [
+  rangeSearchObj : RangeSearch[] = [
     {
       field: '',
       start: '',
       end: '',
     },
   ];
-  nestedSearchObj = [
+  nestedSearchObj : NestedSearch[] = [
     {
       relativePath: 'Category.EnName',
       value: '',
     },
   ];
-  paginatorOptions = [5, 10, 15, 20, 25, 50, 100];
-  searchKeyWord = '';
+  paginatorOptions: PaginatorOptions = [5, 10, 15, 20, 25, 50, 100];
+  searchKeyWord :string = '';
   // #endregion
 
   // #region FIlter
@@ -90,7 +93,6 @@ export class DataGridComponent {
   // #region Constructor
   constructor(
     private dataService: ApiService,
-    private dataGridService: DataGridService,
     private navigation: NavigationService,
     private translate: TranslateService
   ) {}
@@ -102,7 +104,7 @@ export class DataGridComponent {
   @ViewChild('toDate') toDate!: ElementRef;
   @ViewChild('category') category!: ElementRef;
   // #region LifeCycle Hooks
-  searchSubject : Subject<string> = new Subject<string>();
+  searchSubject: Subject<string> = new Subject<string>();
   ngOnInit() {
     this.translate.use(localStorage.getItem('lang') || 'en');
     document.addEventListener('keyup', (event: any) => {
@@ -156,7 +158,7 @@ export class DataGridComponent {
       [this.request.searchKeyWord]: this.searchKeyWord,
     };
 
-    console.log(ApiObject);
+    // console.log(ApiObject);
     return ApiObject;
   }
 
@@ -253,7 +255,6 @@ export class DataGridComponent {
     // this.restCurrentPage();
     // this.emptySelected();
     // this.getData();
-
   }
   // MakeSearchFieldsNUll() {
   //   Object.keys(this.searchObj).forEach((key) => {
@@ -334,7 +335,7 @@ export class DataGridComponent {
   toggleSelectAll() {
     if (this.state.multiEntity.length >= this.state.displayedData.length) {
       this.state.multiEntity = [];
-      this.state.seletedEntity = null;
+      this.state.selectedEntity = null;
     } else {
       this.state.multiEntity = [...this.state.displayedData];
     }
@@ -353,8 +354,8 @@ export class DataGridComponent {
   }
 
   toggleSelectEntity(entity: any) {
-    // if (this.state.seletedEntity == entity) {
-    //   this.state.seletedEntity = null;
+    // if (this.state.selectedEntity == entity) {
+    //   this.state.selectedEntity = null;
     // }
     const index = this.state.multiEntity.indexOf(entity);
     if (index > -1) {
@@ -362,7 +363,7 @@ export class DataGridComponent {
     } else {
       this.state.multiEntity.push(entity);
     }
-    this.state.seletedEntity = this.state.multiEntity[0];
+    this.state.selectedEntity = this.state.multiEntity[0];
     this.setMultiMode();
   }
   isSelectedEntity(entity: any): boolean {
@@ -370,10 +371,9 @@ export class DataGridComponent {
       (e: any) => e[this.state.uniqueKey] === entity[this.state.uniqueKey]
     );
   }
-  emptySelected()
-  {
+  emptySelected() {
     this.state.multiEntity = [];
-    this.state.seletedEntity = null;
+    this.state.selectedEntity = null;
     this.setMultiMode();
   }
   // #endregion
@@ -401,7 +401,7 @@ export class DataGridComponent {
 
   // #region Sorting
   onSort(column: any) {
-    this.dataGridService.emitResetPagSingal();
+    // this.dataGridService.emitResetPagSingal();
     if (
       this.state.currentSortColumn ===
       this.localizeField(column.field, column.isMultiLang)

@@ -27,3 +27,32 @@ export enum ActionDisplayType {
   ROW = 'ROW',
   HEADER = 'HEADER',
 }
+export interface GridState {
+  displayedData: any[];
+  total: number;
+  pageSize: number;
+  pageNumber: number;
+  selectedEntity: any ;
+  multiEntity: any[];
+  multiMode: boolean;
+  sortDirection: string;
+  currentSortColumn: string;
+  uniqueKey: string;
+  isEmpty: boolean;
+  isLoading: boolean;
+  language: string;
+  searchValue: string;
+  displayType: ActionDisplayType;
+}
+
+
+export interface RangeSearch {
+  field: string;
+  start: string;
+  end: string;
+}
+export interface NestedSearch {
+  relativePath: string;
+  value: string;
+}
+export type PaginatorOptions = number[];
