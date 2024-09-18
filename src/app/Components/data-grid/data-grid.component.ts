@@ -33,6 +33,8 @@ export class DataGridComponent {
   ActionType = ActionType;
   nameSearchvalue: string = '';
   categorySearchValue: string = '';
+  startDate: string = '';
+  endDate: string = '';
 
   //#region State Management Object
   state: GridState = {
@@ -117,18 +119,18 @@ export class DataGridComponent {
         this.onCancelSearch();
       }
     });
-    this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
-      this.searchKeyWord = searchTerm;
-      if (
-        !this.isEmptyDate(this.fromDate.nativeElement.value) ||
-        !this.isEmptyDate(this.toDate.nativeElement.value)
-      ) {
-        this.onDateSearch();
-      }
-      this.restCurrentPage();
-      this.emptySelected();
-      this.getData();
-    });
+    // this.searchSubject.pipe(debounceTime(300)).subscribe((searchTerm) => {
+    //   this.searchKeyWord = searchTerm;
+    //   if (
+    //     !this.isEmptyDate(this.fromDate.nativeElement.value) ||
+    //     !this.isEmptyDate(this.toDate.nativeElement.value)
+    //   ) {
+    //     this.onDateSearch();
+    //   }
+    //   this.restCurrentPage();
+    //   this.emptySelected();
+    //   this.getData();
+    // });
   }
 
   // #endregion
@@ -144,6 +146,7 @@ export class DataGridComponent {
       [this.request.sortDirection]: this.state.sortDirection === 'asc' ? 1 : 0,
       searchName: this.nameSearchvalue,
       searchCategoryName: this.categorySearchValue,
+      startEndDate:this.startDate+"|"+this.endDate,
 
       //   [this.request.search]: this.searchObj,
       //   [this.request.rangeSearch]: this.rangeSearchObj.map((range) => {
@@ -249,7 +252,7 @@ export class DataGridComponent {
     // this.searchObj = SearchObj;
     // // (this.searchObj as any)[SearchField] = value;
     // if (value===this.searchKeyWord ) return;
-    this.searchSubject.next(value);
+   // this.searchSubject.next(value);
     // this.searchKeyWord = value;
     // if (
     //   !this.isEmptyDate(this.fromDate.nativeElement.value) ||
@@ -257,9 +260,9 @@ export class DataGridComponent {
     // ) {
     //   this.onDateSearch();
     // }
-    // this.restCurrentPage();
-    // this.emptySelected();
-    // this.getData();
+    this.restCurrentPage();
+    this.emptySelected();
+    this.getData();
   }
   // MakeSearchFieldsNUll() {
   //   Object.keys(this.searchObj).forEach((key) => {
