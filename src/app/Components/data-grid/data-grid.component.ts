@@ -31,6 +31,8 @@ export class DataGridComponent {
   // #endregion
 
   ActionType = ActionType;
+  nameSearchvalue: string = '';
+  categorySearchValue: string = '';
 
   //#region State Management Object
   state: GridState = {
@@ -140,24 +142,27 @@ export class DataGridComponent {
         this.state.currentSortColumn.charAt(0).toUpperCase() +
         this.state.currentSortColumn.slice(1),
       [this.request.sortDirection]: this.state.sortDirection === 'asc' ? 1 : 0,
-      [this.request.search]: this.searchObj,
-      [this.request.rangeSearch]: this.rangeSearchObj.map((range) => {
-        return {
-          field: range.field.charAt(0).toUpperCase() + range.field.slice(1),
-          start: range.start,
-          end: range.end,
-        };
-      }),
-      [this.request.include]: 'Category',
-      [this.request.nestedSearch]: this.nestedSearchObj.map((nested) => {
-        return {
-          relativePath: nested.relativePath,
-          value: nested.value,
-        };
-      }),
-      [this.request.searchKeyWord]: this.searchKeyWord,
-    };
+      searchName: this.nameSearchvalue,
+      searchCategoryName: this.categorySearchValue,
 
+      //   [this.request.search]: this.searchObj,
+      //   [this.request.rangeSearch]: this.rangeSearchObj.map((range) => {
+      //     return {
+      //       field: range.field.charAt(0).toUpperCase() + range.field.slice(1),
+      //       start: range.start,
+      //       end: range.end,
+      //     };
+      //   }),
+      //   [this.request.include]: 'Category',
+      //   [this.request.nestedSearch]: this.nestedSearchObj.map((nested) => {
+      //     return {
+      //       relativePath: nested.relativePath,
+      //       value: nested.value,
+      //     };
+      //   }),
+      //   [this.request.searchKeyWord]: this.searchKeyWord,
+      // };
+    };
     // console.log(ApiObject);
     return ApiObject;
   }

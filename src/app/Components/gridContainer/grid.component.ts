@@ -38,7 +38,7 @@ export class GridContainerComponent {
   }
 
   dataGird: DataGridConfig = {
-    dataApi: 'https://localhost:7237/api/Product/Search',
+    dataApi: 'https://localhost:7237/api/Product/SearchV3',
     columns: [
       {
         header: 'headers.enTitle',

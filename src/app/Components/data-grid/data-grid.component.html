@@ -1,11 +1,11 @@
 <div (keyup.enter)="onSearch(search.value)">
-  <button class="btn btn-primary" (click)="navigateToEmpty()">
+  <!-- <button class="btn btn-primary" (click)="navigateToEmpty()">
     Navigate to Empty
-  </button>
+  </button> -->
   <button class="btn btn-primary" (click)="toggleLang()">SwitchLang</button>
-  <button class="btn btn-primary" (click)="toggleSingleActionStyle()">
+  <!-- <button class="btn btn-primary" (click)="toggleSingleActionStyle()">
     Toggle Single Action Style
-  </button>
+  </button> -->
 
   <div class="row">
     <div class="col-2">
@@ -24,10 +24,13 @@
         class="form-control d-inline"
         placeholder="Search By Arabic Or English Name"
         #search
-        (keyup.enter)="onSearch(search.value)"
-        (input)="strip(search.value)"
+        [(ngModel)]="nameSearchvalue"
+  
       />
+            <!-- (keyup.enter)="onSearch(search.value)"
+        (input)="strip(search.value)" -->
     </div>
+
     <div class="col-3">
       <button class="btn btn-primary" (click)="onSearch(search.value)">
         Search
@@ -38,6 +41,21 @@
       </button>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-6">
+      <input
+        type="text"
+        class="form-control d-inline"
+        placeholder="Search By Arabic Or English Cateogry Name"
+        #search
+        [(ngModel)]="categorySearchValue"
+  
+      />
+    </div>
+  </div>  
+   
   <!-- End Search -->
   <!-- Date Range Search -->
   <div class="row">
@@ -73,7 +91,7 @@
   </div>
   <!-- End Date Range Search -->
   <!-- Add Filter By Cateogry -->
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-4"></div>
 
     <div class="col-3">
@@ -88,7 +106,7 @@
         </option>
       </select>
     </div>
-  </div>
+  </div> -->
   <div style="overflow-x: auto;">
     <table class="table ">
       <!-- #region Headers -->
@@ -133,14 +151,14 @@
               
             
             </button>
-            <button
-              class="btn"
+            <span
+            class="btn no-pointer"
               *ngIf="!column.sortable"
             >
-              <span
+              <span  
                 ><i class="fas "></i></span
               >
-          </button>
+          </span>
           </th>
         </tr>
       </thead>

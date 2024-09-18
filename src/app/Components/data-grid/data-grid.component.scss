@@ -9,8 +9,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 dialog {
@@ -19,38 +23,20 @@ dialog {
   // position fixed in mid of page
 }
 
-// table {
-//   width: 100%;
-//   border-collapse: collapse;
-//   margin-bottom: 20px;
-//   background-color: #fff;
-//   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-//   border-radius: 5px;
-// }
+th {
+  background-color: #615f5f;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  padding: 10px;
+  text-align: left;
+}
 
-// tr:nth-child(even) {
-//   background-color: #f2f2f2;
-// }
-
-// th {
-//   background-color: #615f5f;
-//   color: white;
-//   font-weight: bold;
-//   padding: 10px;
-//   text-align: left;
-// }
-
-// td, th {
-//   padding: 10px;
-//   text-align: left;
-// }
-
-// @media (max-width: 768px) {
-//   table {
-//     font-size: 14px;
-//   }
-  
-//   th, td {
-//     padding: 8px;
-//   }
-// }
+td,
+th {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #f2f2f2;
+}
+.no-pointer {
+  pointer-events: none;
+}
